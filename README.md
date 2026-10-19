@@ -1,18 +1,15 @@
 https://github.com/user-attachments/assets/6a495b13-e0e4-44df-ba65-ab9a53d1803b
 
+
 # StrataUI
 
-**A dynamic UI framework for personal agents, built for [Instinct](https://instinct.com), the viral personal assistant.** (The code calls it Strata.)
+**A dynamic UI framework for personal agents, built for [Instinct](https://instinct.com), the viral personal assistant.**
 
-Instead of replying with a wall of text, the agent writes one constrained JSON spec. StrataUI validates it against a closed catalog of 27 components and renders it as a phone-first page that stays current as the agent keeps working: a trip itinerary, an apartment shortlist, an interview pipeline, a training plan. No agent-authored HTML, CSS or JavaScript ever crosses the wire.
+https://github.com/user-attachments/assets/6a495b13-e0e4-44df-ba65-ab9a53d1803b
 
-## How it works
+## Why
 
-- **Closed component catalog.** The agent chooses blocks by the shape of its data: metrics, timelines, tables, checklists, approvals and more. Every block has a Zod schema, and the agent reads a generated manifest of them (`apps/web/src/page-content/`).
-- **Safe, incremental writes.** Pages are versioned. Edits are small RFC 6902 patches against a `base_version`, so concurrent or retried writes can't silently overwrite each other.
-- **Agent-native REST API.** An agent discovers everything from `/llms.txt`, connects with a one-time email code the person reads back to it, and gets errors written as instructions. The API is described by the OpenAPI document at `/openapi.json`.
-- **Pages that outlive the task.** Pages live in named Spaces, carry their own provenance and update cadence, and are private until explicitly shared by link.
-- **Composition evals.** Deterministic scorers check whether a spec actually *represents* its source material instead of pouring text into cards: role choice, fact retention, unjustified widgets. `pnpm eval:composition --golden` scores the hand-authored reference pages (18 briefs); `pnpm eval:composition --input candidates.json` scores any model's output (`apps/web/evals/composition/`).
+I’ve always been interested in building better interfaces for technology. For agents, that means getting past the wall of text. As people use agents for increasingly important and varied tasks, we need to keep pushing the UX frontier. I built this for text-based personal assistants: the agent writes a JSON spec, which is validated against a small set of tasteful, designed components and rendered as a page. I’ve used it for meal prep, travel bookings, and tracking long-term fitness goals.
 
 ## Run it
 
@@ -33,4 +30,4 @@ The full app (accounts, persistence, sharing) needs Postgres and WorkOS. Copy `a
 
 Published as a single-commit snapshot of the private Strata repository's `main` branch (326 commits, August 21 – September 12, 2026).
 
-Built by [Arav Bhardwaj](https://github.com/abharw) at [Basic Software](https://basicsoftware.ai). © 2026 Basic Software, Inc. Published with Basic Software's permission, for reference; no license is granted.
+Built by Arav Bhardwaj at [Basic Software](https://basicsoftware.ai).
