@@ -1,3 +1,5 @@
+https://github.com/user-attachments/assets/6a495b13-e0e4-44df-ba65-ab9a53d1803b
+
 # StrataUI
 
 **A dynamic UI framework for personal agents, built for [Instinct](https://instinct.com), the viral personal assistant.** (The code calls it Strata.)
