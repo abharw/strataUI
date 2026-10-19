@@ -5,8 +5,6 @@ https://github.com/user-attachments/assets/6a495b13-e0e4-44df-ba65-ab9a53d1803b
 
 **A dynamic UI framework for personal agents, built for [Instinct](https://instinct.com), the viral personal assistant.**
 
-https://github.com/user-attachments/assets/6a495b13-e0e4-44df-ba65-ab9a53d1803b
-
 ## Why
 
 I’ve always been interested in building better interfaces for technology. For agents, that means getting past the wall of text. As people use agents for increasingly important and varied tasks, we need to keep pushing the UX frontier. I built this for text-based personal assistants: the agent writes a JSON spec, which is validated against a small set of tasteful, designed components and rendered as a page. I’ve used it for meal prep, travel bookings, and tracking long-term fitness goals.
