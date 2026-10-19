@@ -1,0 +1,4 @@
+# Written by `pnpm gen:manifest`, committed so a change to what the model sees
+# is a reviewable diff, and asserted byte-for-byte by ../manifest.test.ts.
+manifest.json linguist-generated=true
+authoring-prompt.txt linguist-generated=true

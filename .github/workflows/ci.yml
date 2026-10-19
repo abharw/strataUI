@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    # The write, handlers and provision suites are integration tests against a
+    # real Postgres: they provision a namespace, write through the actual
+    # transaction, and clean up. A service container is that database. It is
+    # given an ephemeral, locally trusted TLS certificate below so CI exercises
+    # the same verified-TLS policy as the Neon connection.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: strata
+          POSTGRES_DB: strata_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      DATABASE_URL: postgresql://postgres:strata@localhost:5432/strata_test?sslmode=verify-full
+      DATABASE_URL_UNPOOLED: postgresql://postgres:strata@localhost:5432/strata_test?sslmode=verify-full
+      PUBLIC_BASE_URL: https://strata.test
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: package.json
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Enable verified TLS for the PostgreSQL service
+        env:
+          POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+          POSTGRES_TLS_DIR: ${{ runner.temp }}/strata-postgres-tls
+        run: |
+          set -euo pipefail
+          mkdir -p "$POSTGRES_TLS_DIR"
+          openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 1 \
+            -keyout "$POSTGRES_TLS_DIR/server.key" \
+            -out "$POSTGRES_TLS_DIR/server.crt" \
+            -subj "/CN=localhost" \
+            -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
+          docker cp "$POSTGRES_TLS_DIR/server.crt" "$POSTGRES_CONTAINER:/var/lib/postgresql/data/server.crt"
+          docker cp "$POSTGRES_TLS_DIR/server.key" "$POSTGRES_CONTAINER:/var/lib/postgresql/data/server.key"
+          docker exec --user root "$POSTGRES_CONTAINER" \
+            chown postgres:postgres /var/lib/postgresql/data/server.crt /var/lib/postgresql/data/server.key
+          docker exec --user root "$POSTGRES_CONTAINER" \
+            chmod 600 /var/lib/postgresql/data/server.key
+          docker exec "$POSTGRES_CONTAINER" psql -U postgres -d postgres \
+            -c "ALTER SYSTEM SET ssl = 'on'"
+          # The image starts with TLS off. Restart to deterministically apply
+          # the configuration and load the certificate before any migration.
+          docker restart "$POSTGRES_CONTAINER" >/dev/null
+          for _ in {1..30}; do
+            if docker exec "$POSTGRES_CONTAINER" pg_isready -U postgres -d strata_test >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          docker exec "$POSTGRES_CONTAINER" pg_isready -U postgres -d strata_test
+          echo "NODE_EXTRA_CA_CERTS=$POSTGRES_TLS_DIR/server.crt" >> "$GITHUB_ENV"
+          docker exec -e PGSSLROOTCERT=/var/lib/postgresql/data/server.crt "$POSTGRES_CONTAINER" \
+            psql "postgresql://postgres:strata@localhost:5432/strata_test?sslmode=verify-full" \
+            --set=ON_ERROR_STOP=1 --tuples-only --no-align \
+            -c "SELECT current_setting('ssl') = 'on' AND (SELECT ssl FROM pg_stat_ssl WHERE pid = pg_backend_pid())" \
+            | grep -Fx 't'
+      - run: pnpm --filter @strata/web exec drizzle-kit migrate
+      # Route and layout types are generated, so typechecking a clean checkout
+      # needs typegen first; locally they survive from the last dev server.
+      - run: pnpm run typecheck
+      - run: pnpm run lint
+      - run: pnpm test
+      - run: pnpm mobile:doctor
+      - run: pnpm mobile:export:ios
+      - run: pnpm mobile:export:android
+      # The build emits route diagnostics. The budget holds every route to a
+      # ceiling someone chose, and separately fails a list or entry route whose
+      # first load has picked up the document renderer.
+      - run: pnpm build
+      - run: pnpm check:bundle-budget

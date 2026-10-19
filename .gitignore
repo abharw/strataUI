@@ -1,0 +1,69 @@
+# dependencies
+node_modules/
+.pnpm-store/
+.pnp
+.pnp.*
+
+# build output
+.next/
+out/
+build/
+dist/
+coverage/
+.turbo/
+.cache/
+*.tsbuildinfo
+next-env.d.ts
+
+# test output
+test-results/
+playwright-report/
+.vitest/
+
+# Expo / React Native
+.expo/
+.metro-health-check*
+expo-env.d.ts
+apps/mobile/ios/
+apps/mobile/android/
+apps/mobile/eas.json
+
+# env files: only the name-only templates are committed
+.env*
+!.env.example
+
+# secrets and signing material
+*.pem
+*.key
+*.p8
+*.p12
+*.jks
+*.keystore
+*.mobileprovision
+google-services.json
+GoogleService-Info.plist
+service-account*.json
+.strata-vault.json
+
+# deployment state
+.vercel/
+
+# editor and agent tooling
+.claude/
+.codex/
+.cursor/
+apps/web/AGENTS.md
+apps/web/CLAUDE.md
+.idea/
+.vscode/
+*.swp
+
+# local scratch
+.local/
+tmp/
+
+# logs and OS files
+*.log
+.DS_Store
+._*
+Thumbs.db

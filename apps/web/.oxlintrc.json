@@ -1,0 +1,327 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+
+  // `plugins` replaces oxlint's defaults, so the default four are restated with the
+  // eslint-config-next plugins and `import`.
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "nextjs", "react", "jsx-a11y", "import"],
+
+  // `correctness` is not enabled wholesale; the rules wanted are enabled explicitly below.
+  "categories": {
+    "correctness": "off"
+  },
+
+  // Type-aware mode (oxlint-tsgolint) for no-floating-promises, no-misused-promises and
+  // await-thenable.
+  "options": {
+    "typeAware": true
+  },
+
+  "env": {
+    "builtin": true
+  },
+
+  "ignorePatterns": [
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts"
+  ],
+
+  // `eslint-config-next/typescript` plus typescript-eslint's untyped `recommended` set, for every
+  // file. Type-aware rules are scoped to TYPED_FILES below.
+  "rules":
+    {
+      "no-array-constructor": "error",
+      "no-unused-expressions": "warn",
+      "no-unused-vars": "warn",
+      "nextjs/google-font-display": "warn",
+      "nextjs/google-font-preconnect": "warn",
+      "nextjs/next-script-for-ga": "warn",
+      "nextjs/no-async-client-component": "warn",
+      "nextjs/no-before-interactive-script-outside-document": "warn",
+      "nextjs/no-css-tags": "warn",
+      "nextjs/no-head-element": "warn",
+      "nextjs/no-html-link-for-pages": "error",
+      "nextjs/no-img-element": "warn",
+      "nextjs/no-page-custom-font": "warn",
+      "nextjs/no-styled-jsx-in-document": "warn",
+      "nextjs/no-sync-scripts": "error",
+      "nextjs/no-title-in-document-head": "warn",
+      "nextjs/no-typos": "warn",
+      "nextjs/no-unwanted-polyfillio": "warn",
+      "nextjs/inline-script-id": "error",
+      "nextjs/no-assign-module-variable": "error",
+      "nextjs/no-document-import-in-page": "error",
+      "nextjs/no-duplicate-head": "error",
+      "nextjs/no-head-import-in-document": "error",
+      "nextjs/no-script-component-in-head": "error",
+      "typescript/ban-ts-comment": "error",
+      "typescript/no-duplicate-enum-values": "error",
+      "typescript/no-empty-object-type": "error",
+      "typescript/no-explicit-any": "error",
+      "typescript/no-extra-non-null-assertion": "error",
+      "typescript/no-misused-new": "error",
+      "typescript/no-namespace": "error",
+      "typescript/no-non-null-asserted-optional-chain": "error",
+      "typescript/no-require-imports": "error",
+      "typescript/no-this-alias": "error",
+      "typescript/no-unnecessary-type-constraint": "error",
+      "typescript/no-unsafe-declaration-merging": "error",
+      "typescript/no-unsafe-function-type": "error",
+      "typescript/no-wrapper-object-types": "error",
+      "typescript/prefer-as-const": "error",
+      "typescript/prefer-namespace-keyword": "error",
+      "typescript/triple-slash-reference": "error"
+    }
+  ,
+
+  "overrides": [
+    {
+      // react / jsx-a11y / import rules from eslint-config-next/core-web-vitals,
+      // plus the browser globals it declares for `env: browser`.
+      "files": ["**/*.{js,jsx,mjs,ts,tsx,mts,cts}"],
+      "rules":
+      {
+        "react/display-name": "error",
+        "react/jsx-key": "error",
+        "react/jsx-no-comment-textnodes": "error",
+        "react/jsx-no-duplicate-props": "error",
+        "react/jsx-no-target-blank": "off",
+        "react/jsx-no-undef": "error",
+        "react/no-children-prop": "error",
+        "react/no-danger-with-children": "error",
+        "react/no-direct-mutation-state": "error",
+        "react/no-find-dom-node": "error",
+        "react/no-is-mounted": "error",
+        "react/no-render-return-value": "error",
+        "react/no-string-refs": "error",
+        "react/no-unescaped-entities": "error",
+        "react/no-unknown-property": "off",
+        "react/no-unsafe": "off",
+        "react/react-in-jsx-scope": "off",
+        "import/no-anonymous-default-export": "warn",
+        "jsx-a11y/alt-text": [
+          "warn",
+          {
+            "elements": [
+              "img"
+            ],
+            "img": [
+              "Image"
+            ]
+          }
+        ],
+        "jsx-a11y/aria-props": "warn",
+        "jsx-a11y/aria-proptypes": "warn",
+        "jsx-a11y/aria-unsupported-elements": "warn",
+        "jsx-a11y/role-has-required-aria-props": "warn",
+        "jsx-a11y/role-supports-aria-props": "warn",
+        "react/rules-of-hooks": "error",
+        "react/exhaustive-deps": "warn",
+        "react/static-components": "error",
+        "react/use-memo": "error",
+        "react/preserve-manual-memoization": "error",
+        "react/incompatible-library": "warn",
+        "react/immutability": "error",
+        "react/globals": "error",
+        "react/refs": "error",
+        "react/set-state-in-effect": "error",
+        "react/error-boundaries": "error",
+        "react/purity": "error",
+        "react/set-state-in-render": "error",
+        "react/unsupported-syntax": "warn"
+      }
+      ,
+      "env": {
+        "browser": true,
+        "node": true
+      }
+    },
+    {
+      // Core JS correctness rules that `tsc` already covers for TS/TSX.
+      "files": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
+      "rules":
+      {
+        "constructor-super": "off",
+        "getter-return": "off",
+        "no-class-assign": "off",
+        "no-const-assign": "off",
+        "no-dupe-class-members": "off",
+        "no-dupe-keys": "off",
+        "no-func-assign": "off",
+        "no-import-assign": "off",
+        "no-new-native-nonconstructor": "off",
+        "no-obj-calls": "off",
+        "no-redeclare": "off",
+        "no-setter-return": "off",
+        "no-this-before-super": "off",
+        "no-unreachable": "off",
+        "no-unsafe-negation": "off",
+        "no-var": "error",
+        "no-with": "off",
+        "prefer-const": "error",
+        "prefer-rest-params": "error",
+        "prefer-spread": "error"
+      }
+    },
+    {
+      // TYPED_FILES: promise rules that need the type checker, enabled by `options.typeAware`.
+      "files": ["src/**/*.ts", "src/**/*.tsx", "scripts/**/*.ts", "evals/**/*.ts"],
+      "rules":
+      {
+        "constructor-super": "off",
+        "getter-return": "off",
+        "no-class-assign": "off",
+        "no-const-assign": "off",
+        "no-dupe-class-members": "off",
+        "no-dupe-keys": "off",
+        "no-func-assign": "off",
+        "no-import-assign": "off",
+        "no-new-native-nonconstructor": "off",
+        "no-obj-calls": "off",
+        "no-redeclare": "off",
+        "no-setter-return": "off",
+        "no-this-before-super": "off",
+        "no-unreachable": "off",
+        "no-unsafe-negation": "off",
+        "no-var": "error",
+        "no-with": "off",
+        "prefer-const": "error",
+        "prefer-rest-params": "error",
+        "prefer-spread": "error",
+        "no-implied-eval": "off",
+        "no-unused-expressions": "error",
+        "no-unused-vars": "error",
+        "no-throw-literal": "off",
+        "prefer-promise-reject-errors": "off",
+        "require-await": "off",
+        "typescript/await-thenable": "error",
+        "typescript/no-array-delete": "error",
+        "typescript/no-base-to-string": "error",
+        "typescript/no-duplicate-type-constituents": "error",
+        "typescript/no-floating-promises": "error",
+        "typescript/no-for-in-array": "error",
+        "typescript/no-implied-eval": "error",
+        "typescript/no-misused-promises": "error",
+        "typescript/no-redundant-type-constituents": "error",
+        "typescript/no-unnecessary-type-assertion": "error",
+        "typescript/no-unsafe-argument": "error",
+        "typescript/no-unsafe-assignment": "error",
+        "typescript/no-unsafe-call": "error",
+        "typescript/no-unsafe-enum-comparison": "error",
+        "typescript/no-unsafe-member-access": "error",
+        "typescript/no-unsafe-return": "error",
+        "typescript/no-unsafe-unary-minus": "error",
+        "typescript/only-throw-error": "error",
+        "typescript/prefer-promise-reject-errors": "error",
+        "typescript/require-await": "error",
+        "typescript/restrict-plus-operands": "error",
+        "typescript/restrict-template-expressions": "error",
+        "typescript/unbound-method": "error"
+      }
+    },
+    {
+      // Test doubles are `async` to match the signature they stand in for.
+      "files": ["**/*.test.ts", "**/*.test.tsx", "src/app/dev/fixtures/**"],
+      "rules":
+      {
+        "typescript/require-await": "off"
+      }
+    },
+    {
+      // `@/` crosses a directory, `./` stays inside one, so the boundary patterns match one spelling.
+      // Rust's `regex` crate has no lookaround, so the one `package.json` climb uses an inline disable.
+      "files": ["src/**/*.ts", "src/**/*.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+      {
+        "regex": "^\\.\\./",
+        "message": "Use the `@/` alias to cross a directory; relative specifiers are for this directory only."
+      }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      // Features may import server types, not server runtime; tests are excluded.
+      // `no-restricted-imports` replaces across overrides, so the no-climb pattern is restated.
+      "files": ["src/features/**/*.ts", "src/features/**/*.tsx"],
+      "excludeFiles": ["**/*.test.ts", "**/*.test.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+      {
+        "regex": "^\\.\\./",
+        "message": "Use the `@/` alias to cross a directory; relative specifiers are for this directory only."
+      },
+      {
+        "group": ["@/server", "@/server/**"],
+        "allowTypeImports": true,
+        "message": "Server values belong behind a route or Server Action. Import the type, or pass the value as a prop."
+      }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      // Shared code and generated content import neither server runtime nor routes; tests excluded.
+      "files": [
+        "src/shared/**/*.ts",
+        "src/shared/**/*.tsx",
+        "src/page-content/**/*.ts",
+        "src/page-content/**/*.tsx"
+      ],
+      "excludeFiles": ["**/*.test.ts", "**/*.test.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+      {
+        "regex": "^\\.\\./",
+        "message": "Use the `@/` alias to cross a directory; relative specifiers are for this directory only."
+      },
+      {
+        "group": ["@/server", "@/server/**"],
+        "allowTypeImports": true,
+        "message": "Server values belong behind a route or Server Action. Import the type, or pass the value as a prop."
+      },
+      {
+        "group": ["@/app", "@/app/**"],
+        "message": "`app/` is the composition root. Pass what a route knows as an argument instead of importing it."
+      }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      // Routes compose server services; services do not import their callers.
+      "files": ["src/server/**/*.ts", "src/server/**/*.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+      {
+        "regex": "^\\.\\./",
+        "message": "Use the `@/` alias to cross a directory; relative specifiers are for this directory only."
+      },
+      {
+        "group": ["@/app", "@/app/**"],
+        "message": "`app/` is the composition root. Pass what a route knows as an argument instead of importing it."
+      }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

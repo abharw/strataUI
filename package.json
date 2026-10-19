@@ -1,0 +1,34 @@
+{
+  "name": "strata",
+  "version": "0.1.0",
+  "private": true,
+  "description": "StrataUI: a dynamic UI framework for personal agents, built for Instinct.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "pnpm --filter @strata/web dev",
+    "mobile:dev": "pnpm --filter @strata/mobile start",
+    "mobile:ios": "pnpm --filter @strata/mobile ios",
+    "mobile:android": "pnpm --filter @strata/mobile android",
+    "mobile:doctor": "pnpm --filter @strata/mobile run doctor",
+    "mobile:export:ios": "pnpm --filter @strata/mobile export:ios",
+    "mobile:export:android": "pnpm --filter @strata/mobile export:android",
+    "build": "pnpm --filter @strata/web build",
+    "lint": "pnpm --filter @strata/web lint",
+    "test": "pnpm --recursive --if-present test",
+    "test:unit": "pnpm --recursive --if-present test:unit",
+    "typecheck": "pnpm --recursive --if-present typecheck",
+    "check:bundle-budget": "pnpm --filter @strata/web check:bundle-budget",
+    "eval:composition": "pnpm --filter @strata/web eval:composition",
+    "gen:manifest": "pnpm --filter @strata/web gen:manifest",
+    "db:generate": "pnpm --filter @strata/web db:generate",
+    "db:migrate": "pnpm --filter @strata/web db:migrate",
+    "db:studio": "pnpm --filter @strata/web db:studio"
+  },
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": "22.x"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18"
+  }
+}

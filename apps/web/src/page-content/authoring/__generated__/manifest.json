@@ -1,0 +1,2850 @@
+{
+  "registry_version": 15,
+  "renderer": "json-render",
+  "json_render_version": "0.20.0",
+  "json_render_directives_version": "0.20.0",
+  "components": [
+    {
+      "name": "accordion",
+      "since": 8,
+      "shape": "labelled details, closed by default",
+      "description": "Keep optional explanations behind short labels when the main answer remains understandable with those details closed.",
+      "interaction": "Expand or collapse individual rows locally; opening a row does not update the page.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "facts",
+          "note": "accordion hides optional explanations; facts keeps short named values visible for scanning."
+        },
+        {
+          "name": "prose",
+          "note": "accordion separates optional explanations behind labels; prose keeps connected reasoning visible."
+        },
+        {
+          "name": "callout",
+          "note": "accordion hides detail the reader may skip; callout keeps a brief caveat or recommendation visible."
+        }
+      ],
+      "example": {
+        "items": [
+          {
+            "id": "a1",
+            "title": "Cancellation",
+            "body": "Full refund until 48 hours before check-in, then one night."
+          },
+          {
+            "id": "a2",
+            "title": "Parking",
+            "body": "Street parking only after 6pm; the garage on 5th validates."
+          }
+        ]
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 48,
+                  "description": "the row's label, at most 48 characters - a name, not a sentence"
+                },
+                "body": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240,
+                  "description": "what opens in place, at most 240 characters; anything longer is prose on the page"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "body"
+              ],
+              "additionalProperties": false
+            },
+            "description": "2-8 optional details; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "approval",
+      "since": 7,
+      "shape": "a question the reader answers",
+      "description": "Ask the owner to choose between a few alternatives when the page needs a recorded answer.",
+      "interaction": "The owner can answer an open question once; the choice is saved. Other readers only view it.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "decision",
+          "note": "approval collects and saves the owner's choice; decision displays alternatives and an optional recorded recommendation."
+        },
+        {
+          "name": "checklist",
+          "note": "approval collects one choice from the owner; checklist displays recorded completion without accepting ticks."
+        }
+      ],
+      "example": {
+        "id": "movers",
+        "question": "Book the movers for the 14th?",
+        "context": "The quote holds until Friday, and the 14th is the only slot left before the lease starts.",
+        "options": [
+          {
+            "id": "book",
+            "label": "Book it"
+          },
+          {
+            "id": "wait",
+            "label": "Wait for quote"
+          }
+        ]
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "stable id for this question within the page"
+          },
+          "question": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "context": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 32
+                }
+              },
+              "required": [
+                "id",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "2-4 concise choices; the renderer keeps their label-only controls together, and a label is all an option says"
+          }
+        },
+        "required": [
+          "id",
+          "question",
+          "options"
+        ],
+        "additionalProperties": false,
+        "description": "at most 320 authored characters across the question, context, and option labels"
+      }
+    },
+    {
+      "name": "attachment-list",
+      "since": 2,
+      "shape": "files belonging to the work",
+      "description": "Present files belonging to the work so the reader can inspect the actual artifact alongside its context.",
+      "interaction": "Preview verified image galleries locally; open available files or originals in another tab.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "reference-list",
+          "note": "attachment-list presents host-resolved files belonging to the work; reference-list links to external evidence."
+        }
+      ],
+      "example": {
+        "items": [
+          {
+            "id": "route-pdf",
+            "resource_id": "asset_01k33route",
+            "label": "Race route.pdf"
+          }
+        ]
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "resource_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200,
+                  "description": "id from POST /v1/assets after uploading the file (image/png, image/jpeg, image/webp, image/gif, image/svg+xml, application/pdf, text/plain, text/csv; at most 4 MB each); credit and source_url belong on the reservation, not on this item"
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240,
+                  "description": "what the reader should call this file"
+                },
+                "kind": {
+                  "description": "fallback hint, normally omitted: the asset record named by resource_id already carries the file's type, and the renderer prefers it - send this only so an asset the host cannot resolve yet still renders as the right kind of thing",
+                  "type": "string",
+                  "enum": [
+                    "document",
+                    "image"
+                  ]
+                },
+                "media_type": {
+                  "description": "fallback hint, normally omitted: the host's own MIME type wins wherever the resource resolves",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100,
+                  "pattern": "^[a-z0-9!#$&^_.+-]+\\/[a-z0-9!#$&^_.+-]+$"
+                },
+                "size_bytes": {
+                  "description": "fallback hint, normally omitted: the host's own measured size wins wherever the resource resolves",
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "detail": {
+                  "description": "one line the host cannot know - what the file is for, not what it is",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240
+                }
+              },
+              "required": [
+                "id",
+                "resource_id",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "the files belonging to the work; items may be empty only when empty is set; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          },
+          "presentation": {
+            "default": null,
+            "description": "how to draw this; leave null to let the device choose the presentation that fits the data and the reader's screen",
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "list",
+                  "gallery"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "empty": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "shown when items has none; items may be empty only when empty is set"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "breakdown",
+      "since": 15,
+      "shape": "parts of a whole",
+      "description": "Show how one whole splits into its named parts when the reader's question is composition, not change over labels.",
+      "interaction": "Inspect tooltips or expand the exact data locally; the breakdown cannot filter or edit values.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "chart",
+          "note": "breakdown shows parts of one whole; chart compares values over shared labels."
+        },
+        {
+          "name": "progress",
+          "note": "progress measures one value against a target; breakdown splits one whole into several named parts."
+        }
+      ],
+      "example": {
+        "parts": [
+          {
+            "id": "swim",
+            "label": "Swim",
+            "value": 1.5
+          },
+          {
+            "id": "bike",
+            "label": "Bike",
+            "value": 6
+          },
+          {
+            "id": "run",
+            "label": "Run",
+            "value": 2.5
+          }
+        ],
+        "unit": "h"
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "parts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 32
+                },
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "value"
+              ],
+              "additionalProperties": false
+            },
+            "description": "up to 8 parts of one whole; parts may be empty only when empty is set; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          },
+          "unit": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32,
+            "description": "what value measures, e.g. \"hours\""
+          },
+          "total_label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32,
+            "description": "the donut's centre text; when present the renderer shows the sum of parts there"
+          },
+          "presentation": {
+            "default": null,
+            "description": "how to draw this; leave null to let the device choose the presentation that fits the data and the reader's screen",
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "donut",
+                  "pie",
+                  "bars",
+                  "radial"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "empty": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "shown when parts has none; parts may be empty only when empty is set"
+          }
+        },
+        "required": [
+          "parts"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "callout",
+      "since": 14,
+      "shape": "a brief labelled note",
+      "description": "Draw attention to a brief caveat, recommendation, or contextual note that deserves emphasis beside the main content.",
+      "interaction": "Display-only; readers cannot acknowledge or dismiss the note.",
+      "reader_acts": false,
+      "confusable_with": [
+        {
+          "name": "quote",
+          "note": "callout emphasizes context from the page; quote preserves words attributed to another voice."
+        },
+        {
+          "name": "accordion",
+          "note": "accordion hides detail the reader may skip; callout keeps a brief caveat or recommendation visible."
+        },
+        {
+          "name": "prose",
+          "note": "callout is a labelled note that draws attention; prose carries a connected explanation without a label."
+        },
+        {
+          "name": "facts",
+          "note": "callout emphasizes one contextual passage; facts presents several named values under their own labels."
+        },
+        {
+          "name": "code-block",
+          "note": "callout wraps narrative text; code-block preserves exact whitespace and punctuation for reuse."
+        },
+        {
+          "name": "metric",
+          "note": "callout emphasizes a sentence of context; metric gives one labelled scalar value visual prominence."
+        }
+      ],
+      "example": {
+        "text": "Flights are held but not ticketed — the fare quote expires Friday.",
+        "tone": "warning"
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240,
+            "description": "plain text, at most 240 characters; line breaks kept, no Markdown in v1"
+          },
+          "tone": {
+            "type": "string",
+            "enum": [
+              "note",
+              "tip",
+              "warning"
+            ],
+            "description": "note = neutral context, tip = a recommendation, warning = something that can go wrong"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "card",
+      "since": 15,
+      "shape": "a self-contained unit with slots",
+      "description": "Give one self-contained peer its own titled, linkable surface - alone in a grid cell, or browsed in a carousel. One optional emoji sits before the title.",
+      "interaction": "Tap a linked card to open its destination; an unlinked card is display-only.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "section",
+          "note": "card is one self-contained unit with slots; section groups any number of mixed children in page order."
+        },
+        {
+          "name": "grid",
+          "note": "grid is the container that holds cards (and bare metrics or progress) together; card is the unit it holds."
+        },
+        {
+          "name": "carousel",
+          "note": "carousel is the container that browses cards one at a time; card is the unit it holds."
+        }
+      ],
+      "example": {
+        "title": "Maple Street",
+        "description": "2BR, laundry in unit, 12 min to the office.",
+        "footer": "$2,150/mo"
+      },
+      "slots": [
+        "default"
+      ],
+      "props": {
+        "type": "object",
+        "properties": {
+          "emoji": {
+            "type": "string",
+            "description": "exactly one emoji, drawn before the title at title size; a bare ❤ or ☀ is stored with its emoji variation selector"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 48,
+            "description": "the card's own heading, at most 48 characters; a card with no children needs this or media"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "media": {
+            "type": "object",
+            "properties": {
+              "resource_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "description": "id from POST /v1/assets after uploading the image; the renderer mints a short-lived serving URL per render"
+              },
+              "alt": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160,
+                "description": "accessible text for a reader who cannot see the image"
+              }
+            },
+            "required": [
+              "resource_id",
+              "alt"
+            ],
+            "additionalProperties": false
+          },
+          "link": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "page": {
+                    "type": "string",
+                    "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    "description": "id of another Strata page; the server resolves its keyed URL, so never paste one"
+                  }
+                },
+                "required": [
+                  "page"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "http(s) URL of an external destination"
+                  }
+                },
+                "required": [
+                  "url"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "footer": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "carousel",
+      "since": 15,
+      "shape": "peers browsed one at a time",
+      "description": "Browse self-contained peer cards with focused attention when inspecting each one matters more than seeing the full set together.",
+      "interaction": "Swipe or use arrows to browse locally; other cards may be out of view.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "grid",
+          "note": "carousel focuses attention on peers through browsing; grid keeps compact values visible together."
+        },
+        {
+          "name": "section",
+          "note": "carousel requires horizontal browsing to inspect peers; section keeps related content in page order."
+        },
+        {
+          "name": "card",
+          "note": "carousel is the container that browses cards one at a time; card is the unit it holds."
+        }
+      ],
+      "example": {},
+      "slots": [
+        "default"
+      ],
+      "props": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "description": "no props; children must be card elements, at most 12. The card is the unit browsed one at a time"
+      }
+    },
+    {
+      "name": "chart",
+      "since": 1,
+      "shape": "values over shared labels",
+      "description": "Compare quantities or inspect patterns across shared labels when relative magnitude or change is the reader's main question.",
+      "interaction": "Inspect tooltips or expand the exact data locally; the chart cannot filter or edit values.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "table",
+          "note": "chart emphasizes numerical patterns; table keeps exact values aligned for lookup and comparison."
+        },
+        {
+          "name": "streak-grid",
+          "note": "chart plots magnitudes over labels; streak-grid shows daily activity through calendar position and relative intensity."
+        },
+        {
+          "name": "breakdown",
+          "note": "chart compares values over shared labels; breakdown shows parts of one whole."
+        }
+      ],
+      "example": {
+        "labels": [
+          "Week 1",
+          "Week 2",
+          "Week 3"
+        ],
+        "series": [
+          {
+            "name": "Actual",
+            "values": [
+              6.2,
+              7.4,
+              8.5
+            ]
+          }
+        ],
+        "y_label": "hours",
+        "presentation": "bar"
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "x-axis labels in order; every series has one value per label. May be empty only when empty is set; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          },
+          "series": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "one number per label, same order as labels"
+                }
+              },
+              "required": [
+                "name",
+                "values"
+              ],
+              "additionalProperties": false
+            },
+            "description": "at most 5 series, each with a distinct name and one value per label. May be empty only when empty is set; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          },
+          "y_label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "what the y axis measures, e.g. \"hours\""
+          },
+          "y_min": {
+            "type": "number",
+            "description": "optional axis floor for line and area; it must not exceed the lowest observed value. A bar presentation's floor is fixed at the smaller of 0 and the lowest value because bar length encodes value, so y_min is accepted and ignored there"
+          },
+          "y_max": {
+            "type": "number",
+            "description": "optional axis ceiling; it must not be below the highest observed value"
+          },
+          "x": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "category",
+                  "time"
+                ],
+                "description": "category for distinct groups (the default reading when x is omitted), time when every label is an ISO date the axis should format"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "additionalProperties": false,
+            "description": "omit for an ordinary category axis; set kind to time when every label must parse as an ISO-8601 date"
+          },
+          "stack": {
+            "default": "none",
+            "description": "none keeps series independent (the default); stacked sums them; percent normalizes the stack to 100%",
+            "type": "string",
+            "enum": [
+              "none",
+              "stacked",
+              "percent"
+            ]
+          },
+          "show_values": {
+            "type": "boolean",
+            "description": "true to print each point or bar's exact value; false leaves them to the tooltip"
+          },
+          "presentation": {
+            "default": null,
+            "description": "how to draw this; leave null to let the device choose the presentation that fits the data and the reader's screen",
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "line",
+                  "bar",
+                  "area",
+                  "bar-horizontal"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "empty": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "shown when labels and series have none; they may be empty only when empty is set"
+          }
+        },
+        "required": [
+          "labels",
+          "series"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "checklist",
+      "since": 1,
+      "shape": "a finite set of steps",
+      "description": "Follow a finite set of steps and review their recorded completion, keeping each step and its deadline together.",
+      "interaction": "Tap a linked step's label; the box records completion and cannot be ticked from the page.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "approval",
+          "note": "approval collects one choice from the owner; checklist displays recorded completion without accepting ticks."
+        },
+        {
+          "name": "decision",
+          "note": "checklist displays steps to carry out; decision presents alternatives to weigh, without collecting a choice."
+        },
+        {
+          "name": "status-list",
+          "note": "checklist displays binary completion; status-list displays multiple states, ownership, and wait direction."
+        },
+        {
+          "name": "timeline",
+          "note": "checklist emphasizes recorded completion; timeline emphasizes the order in which events or stages occur."
+        },
+        {
+          "name": "phases",
+          "note": "checklist tracks recorded completion of steps; phases derives the current stretch of a plan from the calendar."
+        }
+      ],
+      "example": {
+        "items": [
+          {
+            "id": "w1-swim",
+            "label": "Swim 2 × 1,200 m",
+            "done": true
+          },
+          {
+            "id": "w1-bike",
+            "label": "Bike 2 × 32 km",
+            "done": false,
+            "due_at": "2026-08-25"
+          }
+        ]
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "done": {
+                  "default": false,
+                  "description": "true once the step is finished; defaults to false",
+                  "type": "boolean"
+                },
+                "due_at": {
+                  "type": "string",
+                  "description": "deadline for this step: an offset-bearing ISO-8601 datetime when the minute is known, or a bare YYYY-MM-DD day when only the day is known"
+                },
+                "link": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "string",
+                          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                          "description": "id of another Strata page; the server resolves its keyed URL, so never paste one"
+                        }
+                      },
+                      "required": [
+                        "page"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "url": {
+                          "type": "string",
+                          "format": "uri",
+                          "description": "http(s) URL of an external destination"
+                        }
+                      },
+                      "required": [
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "the plan's steps; items may be empty only when empty is set; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          },
+          "empty": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "shown when items has none; items may be empty only when empty is set"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "code-block",
+      "since": 4,
+      "shape": "one exact text artifact",
+      "description": "Preserve exact text for inspection or reuse when whitespace and punctuation are part of its meaning.",
+      "interaction": "Copy the full text or scroll long lines locally; code is never executed.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "callout",
+          "note": "callout wraps narrative text; code-block preserves exact whitespace and punctuation for reuse."
+        },
+        {
+          "name": "facts",
+          "note": "code-block preserves one exact text artifact; facts separates named values and optional copy controls."
+        }
+      ],
+      "example": {
+        "code": "PUBLIC_BASE_URL=https://strata.example\nPOLL_INTERVAL_MS=3000",
+        "language": "dotenv",
+        "filename": ".env.production",
+        "kind": "code"
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000,
+            "description": "exact plain text to preserve verbatim; never wrap it in Markdown fences"
+          },
+          "language": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9+#._-]{1,32}$",
+            "description": "short language or format label such as ts, json, bash, or text"
+          },
+          "filename": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "code",
+              "diff"
+            ],
+            "description": "code for source/config/output; diff when leading + and - lines carry change meaning"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "comparison",
+      "since": 15,
+      "shape": "before and after on named rows",
+      "description": "Show what changed on a small set of named attributes when a before and an after value, stacked on a phone, answers the reader's question better than columns.",
+      "interaction": "Display-only; readers see both values without editing controls.",
+      "reader_acts": false,
+      "confusable_with": [
+        {
+          "name": "table",
+          "note": "comparison stacks exactly a before and after value per row for a phone; table keeps several shared fields aligned side by side."
+        },
+        {
+          "name": "facts",
+          "note": "comparison stacks a before and after value per named row; facts states one thing's named values with no second state."
+        },
+        {
+          "name": "decision",
+          "note": "decision weighs alternatives that have not happened yet; comparison shows what already changed on named attributes."
+        }
+      ],
+      "example": {
+        "items": [
+          {
+            "id": "rent",
+            "label": "Rent",
+            "before": "$1,950/mo",
+            "after": "$2,150/mo"
+          },
+          {
+            "id": "commute",
+            "label": "Commute",
+            "before": "35 min",
+            "after": "12 min"
+          }
+        ]
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 48,
+                  "description": "the attribute's name, at most 48 characters"
+                },
+                "before": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "description": "the earlier value, at most 80 characters"
+                },
+                "after": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "description": "the current value, at most 80 characters"
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "before",
+                "after"
+              ],
+              "additionalProperties": false
+            },
+            "description": "up to 12 attribute rows; items may be empty only when empty is set; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          },
+          "before_label": {
+            "default": "Was",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16
+          },
+          "after_label": {
+            "default": "Now",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16
+          },
+          "empty": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "shown when items has none; items may be empty only when empty is set"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "decision",
+      "since": 5,
+      "shape": "alternatives and their tradeoffs",
+      "description": "Weigh a small set of alternatives and understand an open or settled recommendation with its tradeoffs and rationale.",
+      "interaction": "Display-only; readers cannot select an option or record an answer here.",
+      "reader_acts": false,
+      "confusable_with": [
+        {
+          "name": "approval",
+          "note": "approval collects and saves the owner's choice; decision displays alternatives and an optional recorded recommendation."
+        },
+        {
+          "name": "table",
+          "note": "decision explains alternatives and their tradeoffs; table aligns shared fields for exact comparison."
+        },
+        {
+          "name": "status-list",
+          "note": "decision presents one question with alternatives; status-list tracks independently owned open work."
+        },
+        {
+          "name": "checklist",
+          "note": "checklist displays steps to carry out; decision presents alternatives to weigh, without collecting a choice."
+        },
+        {
+          "name": "comparison",
+          "note": "decision weighs alternatives that have not happened yet; comparison shows what already changed on named attributes."
+        }
+      ],
+      "example": {
+        "question": "Ship the render rule in the guide, or in llms.txt too?",
+        "options": [
+          {
+            "id": "guide",
+            "label": "Guide only",
+            "tradeoff": "One place to maintain; agents that never fetch the guide miss it."
+          },
+          {
+            "id": "both",
+            "label": "Guide and llms.txt",
+            "tradeoff": "Reaches the first read; two copies to keep in step."
+          }
+        ],
+        "chosen_id": "both",
+        "rationale": "llms.txt is what a new agent reads first, so the rule has to be there."
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 32
+                },
+                "tradeoff": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "id",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "2-4 alternatives whose ids remain stable while the decision is open"
+          },
+          "chosen_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "the id of one of the listed options; omit while the decision is open, and setting it requires rationale"
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "why the chosen option won, or - while the call is open - what it is waiting on"
+          }
+        },
+        "required": [
+          "question",
+          "options"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "facts",
+      "since": 15,
+      "shape": "named values",
+      "description": "Look up an entity's named values in a compact layout, whether the reader reads them or copies some elsewhere.",
+      "interaction": "Copy fields marked copyable to the clipboard; other values cannot be edited here.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "code-block",
+          "note": "code-block preserves one exact text artifact; facts separates named values and optional copy controls."
+        },
+        {
+          "name": "table",
+          "note": "facts presents named values independently; table aligns shared fields across records or attributes."
+        },
+        {
+          "name": "item-list",
+          "note": "facts pairs a label with a value for named attributes of one thing; item-list scans titled rows with one trailing value each."
+        },
+        {
+          "name": "comparison",
+          "note": "facts states one thing's named values; comparison stacks a before and after value per named row."
+        },
+        {
+          "name": "accordion",
+          "note": "facts keeps short named values visible for scanning; accordion hides optional explanations behind labels."
+        },
+        {
+          "name": "callout",
+          "note": "facts presents several named values under their own labels; callout emphasizes one contextual passage."
+        },
+        {
+          "name": "prose",
+          "note": "facts separates short named values; prose keeps causal explanations and qualifications connected."
+        }
+      ],
+      "example": {
+        "items": [
+          {
+            "id": "record-locator",
+            "label": "Record locator",
+            "value": "ABC123",
+            "copyable": true
+          },
+          {
+            "id": "check-in",
+            "label": "Check-in",
+            "value": "2026-09-12"
+          }
+        ]
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 48,
+                  "description": "what the fact is called, at most 48 characters - a name, not a sentence"
+                },
+                "value": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "number"
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "amount": {
+                          "type": "number"
+                        },
+                        "currency": {
+                          "type": "string",
+                          "pattern": "^[A-Z]{3}$"
+                        }
+                      },
+                      "required": [
+                        "amount",
+                        "currency"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    }
+                  ],
+                  "description": "the fact itself, at most 200 characters when text; send a typed value or an ISO date rather than a pre-formatted string"
+                },
+                "copyable": {
+                  "type": "boolean",
+                  "description": "true for anything the reader will paste elsewhere: codes, references, PINs"
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "value"
+              ],
+              "additionalProperties": false
+            },
+            "description": "up to 24 named values; items may be empty only when empty is set; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          },
+          "presentation": {
+            "default": null,
+            "description": "how to draw this; leave null to let the device choose the presentation that fits the data and the reader's screen",
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "stacked",
+                  "inline"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "empty": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "shown when items has none; items may be empty only when empty is set"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "grid",
+      "since": 15,
+      "shape": "compact values held together",
+      "description": "Scan a few equally important metrics, progress bars, or cards together when their values should remain visible for comparison.",
+      "interaction": "Display-only; values remain together in two phone columns.",
+      "reader_acts": false,
+      "confusable_with": [
+        {
+          "name": "section",
+          "note": "grid arranges compact peers together; section groups mixed content in page order."
+        },
+        {
+          "name": "carousel",
+          "note": "carousel focuses attention on peers through browsing; grid keeps compact values visible together."
+        },
+        {
+          "name": "table",
+          "note": "grid gives a few values equal prominence; table aligns shared fields for exact comparison."
+        },
+        {
+          "name": "card",
+          "note": "grid is the container that holds cards (and bare metrics or progress) together; card is the unit it holds."
+        }
+      ],
+      "example": {},
+      "slots": [
+        "default"
+      ],
+      "props": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "description": "no props; children must be metric, progress, card elements, at most 8, arranged in two columns on a phone"
+      }
+    },
+    {
+      "name": "item-list",
+      "since": 15,
+      "shape": "rows with a title and a trailing value",
+      "description": "Scan rows of things that share a title and a trailing value, such as doors, days, or line items, when a table's columns would be overkill.",
+      "interaction": "Tap a linked row to open its destination; unlinked rows are display-only. Under by-day, step between dated days with previous and next.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "facts",
+          "note": "item-list scans titled rows with one trailing value each; facts pairs a label with a value for named attributes of one thing."
+        },
+        {
+          "name": "table",
+          "note": "item-list scans rows with one value each; table aligns several shared fields across records."
+        },
+        {
+          "name": "status-list",
+          "note": "item-list is a general row-with-a-value list; status-list is specifically owned open work with a state, owner, and wait time."
+        }
+      ],
+      "example": {
+        "items": [
+          {
+            "id": "unit-4b",
+            "title": "Unit 4B",
+            "description": "2BR, top floor",
+            "value": {
+              "amount": 2150,
+              "currency": "USD"
+            }
+          }
+        ]
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                },
+                "value": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "number"
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 32
+                        }
+                      },
+                      "required": [
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "amount": {
+                          "type": "number"
+                        },
+                        "currency": {
+                          "type": "string",
+                          "pattern": "^[A-Z]{3}$"
+                        }
+                      },
+                      "required": [
+                        "amount",
+                        "currency"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 24
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    }
+                  ]
+                },
+                "media": {
+                  "type": "object",
+                  "properties": {
+                    "resource_id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "description": "id from POST /v1/assets after uploading the image; the renderer mints a short-lived serving URL per render"
+                    },
+                    "alt": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 160,
+                      "description": "accessible text for a reader who cannot see the image"
+                    }
+                  },
+                  "required": [
+                    "resource_id",
+                    "alt"
+                  ],
+                  "additionalProperties": false
+                },
+                "on": {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                  "description": "YYYY-MM-DD; when every row carries this, rows are grouped by day in date order"
+                },
+                "link": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "string",
+                          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                          "description": "id of another Strata page; the server resolves its keyed URL, so never paste one"
+                        }
+                      },
+                      "required": [
+                        "page"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "url": {
+                          "type": "string",
+                          "format": "uri",
+                          "description": "http(s) URL of an external destination"
+                        }
+                      },
+                      "required": [
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "up to 20 rows; items may be empty only when empty is set; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          },
+          "presentation": {
+            "default": null,
+            "description": "how to draw this; leave null to let the device choose the presentation that fits the data and the reader's screen",
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "rows",
+                  "cards",
+                  "by-day"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "empty": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "shown when items has none; items may be empty only when empty is set"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "link-button",
+      "since": 1,
+      "shape": "one prominent next destination",
+      "description": "Make the reader's main next destination prominent, whether it is an external service or another Strata page.",
+      "interaction": "Open an external link in another tab, or navigate to an accessible Strata page.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "reference-list",
+          "note": "link-button makes one next destination prominent; reference-list keeps supporting source links quiet."
+        }
+      ],
+      "example": {
+        "label": "TAP check-in",
+        "url": "https://example.com/tap/check-in/ABC123"
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "what opening the destination does; at most one link-button per page"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "http(s) URL of an external destination; send exactly one of url or page_id"
+          },
+          "page_id": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "description": "id of another page to link to; the server resolves its keyed URL, so never paste one, and send exactly one of url or page_id"
+          }
+        },
+        "required": [
+          "label"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "metric",
+      "since": 15,
+      "shape": "one value",
+      "description": "Glance at one important labelled value, such as a quantity, amount, date, or short state. A value that is an offset-bearing ISO datetime renders relatively - a countdown, or \"3 days ago\" - while a date-only value stays a fixed day. Optional change is a delta with direction and polarity (\"+12 vs yesterday\") and trend a sparkline of recent values.",
+      "interaction": "Display-only; readers see the formatted value without editing controls.",
+      "reader_acts": false,
+      "confusable_with": [
+        {
+          "name": "progress",
+          "note": "metric emphasizes one value; progress measures a current value against a target."
+        },
+        {
+          "name": "callout",
+          "note": "callout emphasizes a sentence of context; metric gives one labelled scalar value visual prominence."
+        }
+      ],
+      "example": {
+        "label": "Hours this week",
+        "value": {
+          "value": 8.5,
+          "unit": "h"
+        }
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number",
+                    "minimum": -999999999999,
+                    "maximum": 999999999999
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 32
+                  }
+                },
+                "required": [
+                  "value"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "number",
+                    "minimum": -999999999999,
+                    "maximum": 999999999999
+                  },
+                  "currency": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{3}$"
+                  }
+                },
+                "required": [
+                  "amount",
+                  "currency"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              {
+                "type": "number",
+                "minimum": -999999999999,
+                "maximum": 999999999999
+              },
+              {
+                "type": "boolean"
+              }
+            ],
+            "description": "the figure: a typed value like {value,unit} or {amount,currency}, an ISO date, or a plain scalar; offset-bearing datetimes render relatively and date-only values stay exact days. Text is at most 40 characters, units 32, and raw figures 999999999999"
+          },
+          "change": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": -999999999999,
+                    "maximum": 999999999999
+                  },
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 12
+                  }
+                ],
+                "description": "the delta: a number, or a short string at most 12 characters such as \"+3\""
+              },
+              "direction": {
+                "type": "string",
+                "enum": [
+                  "up",
+                  "down",
+                  "flat"
+                ],
+                "description": "which way the value moved"
+              },
+              "polarity": {
+                "type": "string",
+                "enum": [
+                  "good",
+                  "bad",
+                  "neutral"
+                ],
+                "description": "what the move means for the reader; omit only when the move is neither good nor bad news"
+              }
+            },
+            "required": [
+              "value",
+              "direction"
+            ],
+            "additionalProperties": false
+          },
+          "trend": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "up to 30 finite values, oldest first, rendered as a sparkline beside the value"
+          }
+        },
+        "required": [
+          "label",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "phases",
+      "since": 15,
+      "shape": "named stages toward a date",
+      "description": "Follow named stretches of a plan toward a date, letting the reader see which stage is current without being told the week number.",
+      "interaction": "Display-only; the current stage and days remaining are derived from the viewer's clock, not set by the reader.",
+      "reader_acts": false,
+      "confusable_with": [
+        {
+          "name": "timeline",
+          "note": "phases groups contiguous stretches toward a date and derives the current one; timeline follows discrete dated events or stages in order."
+        },
+        {
+          "name": "progress",
+          "note": "progress measures one value against a target; phases names the stretches of time between now and a target date."
+        },
+        {
+          "name": "checklist",
+          "note": "checklist tracks recorded completion of steps; phases derives the current stretch of a plan from the calendar."
+        }
+      ],
+      "example": {
+        "stages": [
+          {
+            "id": "base",
+            "name": "Base",
+            "start": "2026-08-01",
+            "end": "2026-09-01"
+          },
+          {
+            "id": "build",
+            "name": "Build",
+            "start": "2026-09-01",
+            "end": "2026-09-22"
+          },
+          {
+            "id": "taper",
+            "name": "Taper",
+            "start": "2026-09-22",
+            "end": "2026-10-04"
+          }
+        ],
+        "target": {
+          "label": "Race day",
+          "at": "2026-10-04"
+        }
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "stages": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 32
+                },
+                "start": {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                  "description": "YYYY-MM-DD; must equal the previous stage's end"
+                },
+                "end": {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                  "description": "YYYY-MM-DD; must equal the next stage's start"
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "start",
+                "end"
+              ],
+              "additionalProperties": false
+            },
+            "description": "at most 8 stages, contiguous and ordered: each stage's end equals the next stage's start; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          },
+          "target": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 32,
+                "description": "what the target date means, at most 32 characters"
+              },
+              "at": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                "description": "YYYY-MM-DD"
+              }
+            },
+            "required": [
+              "label",
+              "at"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "stages"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "progress",
+      "since": 1,
+      "shape": "one value against a target",
+      "description": "Judge how far a measured value has advanced toward a real target and any source-backed deadline. When lower is better - a mile time, a backlog - set direction:\"lower\" with the start it is coming down from.",
+      "interaction": "Display-only; readers cannot adjust the value or mark the target complete.",
+      "reader_acts": false,
+      "confusable_with": [
+        {
+          "name": "metric",
+          "note": "metric emphasizes one value; progress measures a current value against a target."
+        },
+        {
+          "name": "streak-grid",
+          "note": "progress compares a value with a target; streak-grid reveals activity cadence and intensity by day."
+        },
+        {
+          "name": "breakdown",
+          "note": "progress measures one value against a target; breakdown splits one whole into several named parts."
+        },
+        {
+          "name": "phases",
+          "note": "progress measures one value against a target; phases names the stretches of time between now and a target date."
+        }
+      ],
+      "example": {
+        "label": "Weekly volume",
+        "current": {
+          "value": 8.5,
+          "unit": "h"
+        },
+        "target": {
+          "value": 11,
+          "unit": "h"
+        },
+        "target_at": "2026-08-30"
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32
+          },
+          "current": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 32
+                  }
+                },
+                "required": [
+                  "value"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{3}$"
+                  }
+                },
+                "required": [
+                  "amount",
+                  "currency"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "description": "the value reached so far; use the same shape and unit as target"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 32
+                  }
+                },
+                "required": [
+                  "value"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{3}$"
+                  }
+                },
+                "required": [
+                  "amount",
+                  "currency"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "description": "the value that means done; must be greater than 0"
+          },
+          "target_at": {
+            "type": "string",
+            "description": "target date: an offset-bearing ISO-8601 datetime when the minute is known, or a bare YYYY-MM-DD day when only the day is known"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "higher",
+              "lower"
+            ],
+            "description": "which way good runs; omit for the default higher, and use lower when a falling value is the improvement (a mile time, a backlog), which requires start"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 32
+                  }
+                },
+                "required": [
+                  "value"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{3}$"
+                  }
+                },
+                "required": [
+                  "amount",
+                  "currency"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "description": "where the value started, in the same shape and unit as current; required when direction is lower, because completion is measured from start down toward target"
+          },
+          "presentation": {
+            "default": null,
+            "description": "how to draw this; leave null to let the device choose the presentation that fits the data and the reader's screen",
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "bar",
+                  "ring"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "label",
+          "current",
+          "target"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "prose",
+      "since": 6,
+      "shape": "a connected explanation",
+      "description": "Read a connected explanation when causal relationships, qualifications, or reasoning need to stay together in sentences.",
+      "interaction": "Display-only; paragraphs remain visible and cannot be edited by the reader.",
+      "reader_acts": false,
+      "confusable_with": [
+        {
+          "name": "quote",
+          "note": "prose is the page's own explanation; quote preserves another voice with optional attribution."
+        },
+        {
+          "name": "accordion",
+          "note": "accordion separates optional explanations behind labels; prose keeps connected reasoning visible."
+        },
+        {
+          "name": "callout",
+          "note": "callout is a labelled note that draws attention; prose carries a connected explanation without a label."
+        },
+        {
+          "name": "facts",
+          "note": "facts separates short named values; prose keeps causal explanations and qualifications connected."
+        }
+      ],
+      "example": {
+        "text": "The consulate confirmed the appointment for the 14th.\n\nThey want the original lease, not a scan, so the deposit has to clear first."
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400,
+            "description": "plain paragraphs, at most 400 characters; at most 1 prose element per page, never the root's first child. A blank line starts a new paragraph; no Markdown"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "quote",
+      "since": 8,
+      "shape": "one attributed voice",
+      "description": "Read a short quotation in its own voice, with attribution when the source identifies its speaker.",
+      "interaction": "Display-only; the quotation remains visible without controls.",
+      "reader_acts": false,
+      "confusable_with": [
+        {
+          "name": "prose",
+          "note": "prose is the page's own explanation; quote preserves another voice with optional attribution."
+        },
+        {
+          "name": "callout",
+          "note": "callout emphasizes context from the page; quote preserves words attributed to another voice."
+        },
+        {
+          "name": "reference-list",
+          "note": "quote presents words on the page; reference-list lets readers open the source material."
+        }
+      ],
+      "example": {
+        "text": "We would rather ship one quiet page a day than ten loud ones.",
+        "attribution": "Ada, product lead"
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "the quoted words, at most 200 characters; at most one quote per page"
+          },
+          "attribution": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "who said it, at most 80 characters; omit when there is no one to name"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "reference-list",
+      "since": 4,
+      "shape": "quiet external evidence",
+      "description": "Consult supporting evidence or further reading through quiet source links with enough context to identify each source.",
+      "interaction": "Open sources in another tab; expand clipped titles and notes locally.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "quote",
+          "note": "quote presents words on the page; reference-list lets readers open the source material."
+        },
+        {
+          "name": "link-button",
+          "note": "link-button makes one next destination prominent; reference-list keeps supporting source links quiet."
+        },
+        {
+          "name": "attachment-list",
+          "note": "attachment-list presents host-resolved files belonging to the work; reference-list links to external evidence."
+        }
+      ],
+      "example": {
+        "items": [
+          {
+            "id": "json-render-catalog",
+            "title": "Catalogs",
+            "url": "https://json-render.dev/docs/catalog",
+            "source": "JSON Render",
+            "note": "How model-facing components and props are declared."
+          }
+        ]
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240,
+                  "description": "the source's own title, at most 240 characters; every title, source and note on this element shares 600 characters, so full-length fields only fit a list of about one - a longer list means shorter entries"
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "http(s) source URL"
+                },
+                "source": {
+                  "description": "who published it - a publication or site name, at most 120 characters; every title, source and note on this element shares 600 characters, so full-length fields only fit a list of about one - a longer list means shorter entries",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "published_at": {
+                  "type": "string",
+                  "description": "when the source was published, at the precision the source establishes: a bare year (YYYY), a year-month (YYYY-MM), a calendar date (YYYY-MM-DD), or an ISO-8601 datetime with an offset - never invent precision the source does not have"
+                },
+                "note": {
+                  "description": "one line on why this source is here, at most 120 characters; every title, source and note on this element shares 600 characters, so full-length fields only fit a list of about one - a longer list means shorter entries",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "url"
+              ],
+              "additionalProperties": false
+            },
+            "description": "at most 20 sources, each with its own id. Items may be empty only when empty is set; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          },
+          "empty": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "shown when items has none; items may be empty only when empty is set"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "section",
+      "since": 1,
+      "shape": "mixed content in page order",
+      "description": "Group related content in page order, using headings for meaningful parts within the page and an untitled section at the root.",
+      "interaction": "Read children in page order; grouping adds no controls or saved state.",
+      "reader_acts": false,
+      "confusable_with": [
+        {
+          "name": "grid",
+          "note": "grid arranges compact peers together; section groups mixed content in page order."
+        },
+        {
+          "name": "carousel",
+          "note": "carousel requires horizontal browsing to inspect peers; section keeps related content in page order."
+        },
+        {
+          "name": "card",
+          "note": "card is one self-contained unit with slots; section groups any number of mixed children in page order."
+        }
+      ],
+      "example": {
+        "title": "This week"
+      },
+      "slots": [
+        "default"
+      ],
+      "props": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "description": "optional heading for a nested section; omit on the root section, where app chrome owns the page title",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "status-list",
+      "since": 1,
+      "shape": "an open-work queue",
+      "description": "Review open work by its current state, ownership, and waiting time to understand what needs attention next.",
+      "interaction": "Display-only; statuses, owners, and follow-up dates are set by agent writes.",
+      "reader_acts": false,
+      "confusable_with": [
+        {
+          "name": "decision",
+          "note": "decision presents one question with alternatives; status-list tracks independently owned open work."
+        },
+        {
+          "name": "checklist",
+          "note": "checklist displays binary completion; status-list displays multiple states, ownership, and wait direction."
+        },
+        {
+          "name": "timeline",
+          "note": "status-list tracks independently owned open work; timeline orders related events or stages."
+        },
+        {
+          "name": "item-list",
+          "note": "item-list is a general row-with-a-value list; status-list is specifically owned open work with a state, owner, and wait time."
+        }
+      ],
+      "example": {
+        "items": [
+          {
+            "id": "bike-fit",
+            "label": "Bike fit at Ride Studio",
+            "status": "waiting-on-them",
+            "owner": "Ride Studio",
+            "since": "2026-08-18",
+            "next_check_at": "2026-08-25"
+          }
+        ]
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "not-started",
+                    "in-progress",
+                    "waiting-on-you",
+                    "waiting-on-them",
+                    "blocked",
+                    "at-risk",
+                    "cancelled",
+                    "done"
+                  ],
+                  "description": "not-started = nothing has happened yet; in-progress = underway and nobody is waiting; waiting-on-you = the reader owes the next move; waiting-on-them = someone else does; blocked = neither can move yet; at-risk = still moving but the date or outcome is in doubt; cancelled = dropped rather than finished; done = closed. Prefer a wait state when the item is stalled on a named person, and in-progress when the work itself is the answer"
+                },
+                "owner": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "the person or org holding it; required when the status is waiting-on-them"
+                },
+                "since": {
+                  "type": "string",
+                  "description": "when it entered this state, at the precision the source establishes: a bare year (YYYY), a year-month (YYYY-MM), a calendar date (YYYY-MM-DD), or an ISO-8601 datetime with an offset - never invent precision the source does not have. An offset-bearing datetime renders relatively (\"6 days ago\"); a day renders as \"since <day>\"; a year or year-month renders as itself"
+                },
+                "due_at": {
+                  "type": "string",
+                  "description": "deadline for this item: an offset-bearing ISO-8601 datetime when the minute is known, or a bare YYYY-MM-DD day when only the day is known"
+                },
+                "next_check_at": {
+                  "type": "string",
+                  "description": "when to check this item again: an offset-bearing ISO-8601 datetime when the minute is known, or a bare YYYY-MM-DD day when only the day is known"
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "status"
+              ],
+              "additionalProperties": false
+            },
+            "description": "the open loops; items may be empty only when empty is set; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          },
+          "empty": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "shown when items has none; items may be empty only when empty is set"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "streak-grid",
+      "since": 1,
+      "shape": "daily activity by calendar position",
+      "description": "Inspect daily activity patterns through calendar position and relative intensity when cadence or consistency matters more than precise comparison. Optional days (7-371) draws a last-N-days window ending on the reader's today, or on end, from cells that name only active days.",
+      "interaction": "Scroll the calendar locally; cells are display-only and cannot record activity.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "progress",
+          "note": "progress compares a value with a target; streak-grid reveals activity cadence and intensity by day."
+        },
+        {
+          "name": "chart",
+          "note": "chart plots magnitudes over labels; streak-grid shows daily activity through calendar position and relative intensity."
+        },
+        {
+          "name": "table",
+          "note": "streak-grid reveals daily cadence and intensity; table supports exact lookup across shared fields."
+        }
+      ],
+      "example": {
+        "cells": [
+          {
+            "date": "2026-08-19",
+            "value": 1
+          },
+          {
+            "date": "2026-08-20",
+            "value": 0
+          },
+          {
+            "date": "2026-08-21",
+            "value": 2
+          }
+        ]
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "cells": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+                  "description": "YYYY-MM-DD; one cell per day, and the cell's identity"
+                },
+                "value": {
+                  "type": "number",
+                  "minimum": 0,
+                  "description": "non-negative intensity for that day; 0 records no activity, an absent date has no observation"
+                }
+              },
+              "required": [
+                "date",
+                "value"
+              ],
+              "additionalProperties": false
+            },
+            "description": "one cell per date, each date once: at most 371 cells spanning at most 371 days from the earliest to the latest. Cells may be empty only when empty is set; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          },
+          "days": {
+            "type": "integer",
+            "minimum": 7,
+            "maximum": 371,
+            "description": "draw a fixed window of the last N days (7-371) ending at end, so cells may name only the days with activity; omit it to let the cells describe their own range"
+          },
+          "end": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "YYYY-MM-DD, the last day of the days window; omit it and the window ends on the reader's own today"
+          },
+          "empty": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "shown when cells has none; cells may be empty only when empty is set"
+          }
+        },
+        "required": [
+          "cells"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "table",
+      "since": 1,
+      "shape": "records on shared fields",
+      "description": "Compare aligned records or attributes on shared fields when exact lookup and side-by-side comparison matter to the reader.",
+      "interaction": "Scroll wide tables and copy marked columns; no sorting, filtering, or editing.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "decision",
+          "note": "decision explains alternatives and their tradeoffs; table aligns shared fields for exact comparison."
+        },
+        {
+          "name": "facts",
+          "note": "facts presents named values independently; table aligns shared fields across records or attributes."
+        },
+        {
+          "name": "chart",
+          "note": "chart emphasizes numerical patterns; table keeps exact values aligned for lookup and comparison."
+        },
+        {
+          "name": "streak-grid",
+          "note": "streak-grid reveals daily cadence and intensity; table supports exact lookup across shared fields."
+        },
+        {
+          "name": "grid",
+          "note": "grid gives a few values equal prominence; table aligns shared fields for exact comparison."
+        },
+        {
+          "name": "comparison",
+          "note": "comparison stacks a before and after value per row for a phone; table keeps several shared fields aligned side by side."
+        },
+        {
+          "name": "item-list",
+          "note": "item-list scans rows with one trailing value; table aligns several shared fields across records."
+        }
+      ],
+      "example": {
+        "columns": [
+          "",
+          "TAP 1049",
+          "Iberia 3421"
+        ],
+        "highlight_column": 1,
+        "rows": [
+          {
+            "id": "price",
+            "cells": [
+              "Price",
+              {
+                "amount": 412,
+                "currency": "USD"
+              },
+              {
+                "amount": 389,
+                "currency": "USD"
+              }
+            ]
+          },
+          {
+            "id": "duration",
+            "cells": [
+              "Duration",
+              {
+                "value": 7.5,
+                "unit": "h"
+              },
+              {
+                "value": 11,
+                "unit": "h"
+              }
+            ]
+          },
+          {
+            "id": "stops",
+            "cells": [
+              "Stops",
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "columns": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "header labels, left to right; use \"\" for the empty corner of a comparison matrix"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "cells": {
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "number"
+                          },
+                          "unit": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 32
+                          }
+                        },
+                        "required": [
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "amount": {
+                            "type": "number"
+                          },
+                          "currency": {
+                            "type": "string",
+                            "pattern": "^[A-Z]{3}$"
+                          }
+                        },
+                        "required": [
+                          "amount",
+                          "currency"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "boolean"
+                      }
+                    ]
+                  },
+                  "description": "one value per column, in order; use {value,unit} and {amount,currency} rather than formatting numbers yourself"
+                }
+              },
+              "required": [
+                "id",
+                "cells"
+              ],
+              "additionalProperties": false
+            },
+            "description": "one row per record; row ids are unique, every row carries one cell per column, and rows may be empty only when empty is set; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          },
+          "highlight_column": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "zero-based index of the column to mark as the pick"
+          },
+          "copyable_columns": {
+            "description": "zero-based indices of columns whose values the reader will paste elsewhere; repeats are ignored",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "key_column": {
+            "type": "string",
+            "minLength": 1,
+            "description": "the column name that identifies a row; must name one of columns. Heads each stacked facts block when presentation is records"
+          },
+          "presentation": {
+            "default": null,
+            "description": "how to draw this; leave null to let the device choose the presentation that fits the data and the reader's screen",
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "grid",
+                  "records"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "empty": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "shown when rows has none; rows may be empty only when empty is set"
+          }
+        },
+        "required": [
+          "columns",
+          "rows"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "timeline",
+      "since": 1,
+      "shape": "an ordered sequence",
+      "description": "Follow an ordered sequence of events or stages, preserving only the dates and times the source establishes.",
+      "interaction": "Tap a linked event to open its destination; the sequence itself cannot be rescheduled or completed from the page.",
+      "reader_acts": true,
+      "confusable_with": [
+        {
+          "name": "status-list",
+          "note": "status-list tracks independently owned open work; timeline orders related events or stages."
+        },
+        {
+          "name": "checklist",
+          "note": "checklist emphasizes recorded completion; timeline emphasizes the order in which events or stages occur."
+        },
+        {
+          "name": "phases",
+          "note": "phases groups contiguous stretches toward a date and derives the current one; timeline follows discrete dated events or stages in order."
+        }
+      ],
+      "example": {
+        "order": "ascending",
+        "events": [
+          {
+            "id": "landing",
+            "at": "2026-09-12",
+            "time": "14:05",
+            "title": "Land at Humberto Delgado",
+            "place": "LIS Terminal 1",
+            "ref": "TAP 1049"
+          }
+        ]
+      },
+      "slots": [],
+      "props": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "default": "ascending",
+            "description": "reading direction; defaults to ascending. descending for a newest-first history, as-provided when the source order is meaningful or the events are undated",
+            "type": "string",
+            "enum": [
+              "ascending",
+              "descending",
+              "as-provided"
+            ]
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "at": {
+                  "type": "string",
+                  "description": "when it happened, at the precision the source establishes: a bare year (YYYY), a year-month (YYYY-MM), a calendar date (YYYY-MM-DD), or an ISO-8601 datetime with an offset - never invent precision the source does not have; omit only when the sequence is intentionally undated"
+                },
+                "time": {
+                  "type": "string",
+                  "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?$",
+                  "description": "HH:MM local wall-clock time; use with a date-only at, or alone when the surrounding page already establishes the day"
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "place": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "link": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "string",
+                          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                          "description": "id of another Strata page; the server resolves its keyed URL, so never paste one"
+                        }
+                      },
+                      "required": [
+                        "page"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "url": {
+                          "type": "string",
+                          "format": "uri",
+                          "description": "http(s) URL of an external destination"
+                        }
+                      },
+                      "required": [
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "the events in the order given; unless order is as-provided, every event needs at or time, and the whole timeline uses one time form. Events may be empty only when empty is set; every visible character in this array counts against one 600-character collection budget, and that budget binds before the item cap - short items reach the cap, long items do not"
+          },
+          "empty": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "shown when events has none; events may be empty only when empty is set"
+          }
+        },
+        "required": [
+          "events"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

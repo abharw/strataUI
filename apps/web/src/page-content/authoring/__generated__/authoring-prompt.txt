@@ -1,0 +1,83 @@
+STRATA PAGE CONTRACT
+
+WHEN
+Text is the default. Make a page only when the answer holds 3+ structured facts the person will come back to: a comparison, schedule, queue of open loops, ledger, or several peers of one shape. One page per reply. Always also send the one-line text.
+
+CREATE — PUT /v1/pages with exactly this body:
+{"space":{"slug":"trip","name":"2-4 words","emoji":"✈️"},"slug":"page-slug","title":"Title","kind":"living",
+ "summary":"what this write changed, one line",
+ "spec":{"answer":{"verdict":"where it stands, ≤140 chars"},
+         "root":"root",
+         "elements":{"root":{"type":"section","props":{},"children":["a","b"]},
+                     "a":{"type":"metric","props":{"label":"Remaining","value":{"amount":720,"currency":"USD"}}},
+                     "b":{"type":"status-list","props":{"items":[{"id":"catering","label":"Catering","status":"waiting-on-them","owner":"Maya","since":"2026-08-26"}]}}}}}
+Rules: ids match ^[a-z][a-z0-9-]{0,63}$ and are defined once; leaves omit children; root is a section with no title; only section, grid, carousel and card have children. kind: living = rewritten as things change, standing = written once.
+Response: {page_id, owner_url, url, version, warnings, budget_remaining}. Send the person owner_url with a one-line answer; url is for other recipients.
+
+EDIT — GET /v1/pages/{id} → {spec, version}; then PATCH /v1/pages/{id}/spec
+{"base_version":<version>,"summary":"what changed","ops":[{"op":"replace","path":"/elements/a/props/value","value":640},{"op":"replace","path":"/answer/verdict","value":"…"}]}
+Untouched elements keep their ids and order — update in place, never regenerate the page.
+
+CHOOSE — three steps, in order
+Start from what the reader needs to understand or do. If the request only supplies data, infer a useful reading task from its meaning; do not treat the source format as a request to reproduce it. Respect any stated task or interaction; preserve the supplied facts, units, gaps and uncertainty.
+1. NAME THE SHAPE, TAKE THE BLOCK WITH THAT SHAPE. Say in one phrase what the data is - one value; named values; rows with a title and a trailing value; records on shared fields; values over shared labels; parts of a whole - and match that phrase to the one in square brackets on a component line. A picture is not a shape: a line and a bar are one chart because they take the same data, and a donut is a breakdown because parts of a whole is different data. If two phrases fit, the data has two shapes; use two blocks.
+2. DECIDE WHAT MUST STAY VISIBLE TOGETHER, THEN PICK THE CONTAINER. Judge that by effort on a narrow phone - the reading, scrolling, opening and remembering it takes to reach the answer - not by component count. Keep the values a comparison needs visible at once; give substantial per-item detail the width to read it.
+  - Nothing has to be held together: siblings in a section, the default; the root is always one.
+  - One thing needs its own surface, heading, picture, tag or tap target: card. A card is a container with slots, not a type - stat card = card + metric, cover card = card with media. A child must be one of: attachment-list, breakdown, callout, chart, checklist, comparison, facts, item-list, metric, progress, prose, quote, timeline. No container nests inside a card. Zero children is valid when title or media is present.
+  - A few compact peers must stay visible for comparison: grid, up to 8 children, always two columns on a phone. A child must be one of: metric, progress, card, and a card in a grid holds one block. Bars, rows, axes and sentences need the width of a section.
+  - Peers are inspected one at a time and the set need not stay visible: carousel, up to 12 children, every one a card.
+  Two apartments as a card grid, each card carrying a title, a footer and one metric:
+  {"units":{"type":"grid","props":{},"children":["bergen","carroll"]},"bergen":{"type":"card","props":{"title":"Bergen St","description":"2BR","footer":"$2,150/mo"},"children":["bergen-walk"]},"bergen-walk":{"type":"metric","props":{"label":"Walk to office","value":{"value":12,"unit":"min"}}},"carroll":{"type":"card","props":{"title":"Carroll St","description":"2BR","footer":"$2,400/mo"},"children":["carroll-walk"]},"carroll-walk":{"type":"metric","props":{"label":"Walk to office","value":{"value":8,"unit":"min"}}}}
+3. LEAVE presentation NULL UNLESS THERE IS A REASON THE DEVICE CANNOT KNOW. Null means the device picks from the data and the screen. Name one only when you know something the data does not say, and a presentation the person explicitly asked for counts as a reason. What null already does:
+  - chart: time labels give a line, or an area when stacked; category labels give a bar, grouped for several series, horizontal for one series whose labels run over 12 characters.
+  - breakdown: a donut when total_label is set or there are five parts or fewer; bars otherwise, because bars are the honest phone rendering of many small parts.
+  - facts: inline when every value is 40 characters or shorter, stacked when any is longer.
+  - table: grid up to three columns; records - each row a stacked block headed by its key_column - beyond that on a phone.
+  - item-list: rows; ask for by-day (one dated day on screen, opened on the reader's today, stepped with previous and next) when every row carries on and the reader wants a day at a time. progress: bar. attachment-list: gallery when every item is a host-verified image, list otherwise.
+
+THREE FIELDS THAT ARE NOT BLOCKS
+link makes a whole card, an item-list row, a timeline event or a checklist step's label tappable, and the renderer draws the affordance. It is exactly one of {"page":"<the uuid GET /v1/pages returned>"} or {"url":"https://…"} - never a share URL, because the server resolves a page link into the reader's own keyed URL and renders it unlinked for a reader who cannot reach it. link-button remains the page's one prominent destination.
+empty is one sentence of at most 80 characters shown in place of a collection with no items, and every block with an items array takes it. An items array may be empty only when empty is set, and may not carry empty when it has items. This is the honesty field: "No workouts logged yet" beats an invented row. phases is the exception - its stages are required, so an empty one is a schema error.
+sequence sits on the spec root beside answer, root and elements, never on a block: {"up":<link>,"position":<n>}, or {"previous":<link>,"next":<link>,"up":<link>}. The chrome draws it under the title as the page's pager, labelled from the target pages' titles at read time, so a Week belongs to its Plan without a navigation block. Prefer up plus position: previous and next are derived from the siblings sharing that up, so a plan's pages are written in one pass knowing only the parent's id; write previous or next only when the chain is not siblings. It is one-way: give the parent an item-list of linked rows.
+
+COMPONENTS (27) — the phrase in brackets is the block's data shape; match step 1's phrase to it, then fetch exact props: GET /v1/manifest?components=metric,status-list (section is included). Blocks are display-only unless a Reader line says otherwise.
+- accordion [labelled details, closed by default]: Keep optional explanations behind short labels when the main answer remains understandable with those details closed. Reader: Expand or collapse individual rows locally; opening a row does not update the page.
+- approval [a question the reader answers]: Ask the owner to choose between a few alternatives when the page needs a recorded answer. Reader: The owner can answer an open question once; the choice is saved. Other readers only view it.
+- attachment-list [files belonging to the work]: Present files belonging to the work so the reader can inspect the actual artifact alongside its context. Reader: Preview verified image galleries locally; open available files or originals in another tab.
+- breakdown [parts of a whole]: Show how one whole splits into its named parts when the reader's question is composition, not change over labels. Reader: Inspect tooltips or expand the exact data locally; the breakdown cannot filter or edit values.
+- callout [a brief labelled note]: Draw attention to a brief caveat, recommendation, or contextual note that deserves emphasis beside the main content.
+- card [a self-contained unit with slots]: Give one self-contained peer its own titled, linkable surface - alone in a grid cell, or browsed in a carousel. One optional emoji sits before the title. Reader: Tap a linked card to open its destination; an unlinked card is display-only.
+- carousel [peers browsed one at a time]: Browse self-contained peer cards with focused attention when inspecting each one matters more than seeing the full set together. Reader: Swipe or use arrows to browse locally; other cards may be out of view.
+- chart [values over shared labels]: Compare quantities or inspect patterns across shared labels when relative magnitude or change is the reader's main question. Reader: Inspect tooltips or expand the exact data locally; the chart cannot filter or edit values.
+- checklist [a finite set of steps]: Follow a finite set of steps and review their recorded completion, keeping each step and its deadline together. Reader: Tap a linked step's label; the box records completion and cannot be ticked from the page.
+- code-block [one exact text artifact]: Preserve exact text for inspection or reuse when whitespace and punctuation are part of its meaning. Reader: Copy the full text or scroll long lines locally; code is never executed.
+- comparison [before and after on named rows]: Show what changed on a small set of named attributes when a before and an after value, stacked on a phone, answers the reader's question better than columns.
+- decision [alternatives and their tradeoffs]: Weigh a small set of alternatives and understand an open or settled recommendation with its tradeoffs and rationale.
+- facts [named values]: Look up an entity's named values in a compact layout, whether the reader reads them or copies some elsewhere. Reader: Copy fields marked copyable to the clipboard; other values cannot be edited here.
+- grid [compact values held together]: Scan a few equally important metrics, progress bars, or cards together when their values should remain visible for comparison.
+- item-list [rows with a title and a trailing value]: Scan rows of things that share a title and a trailing value, such as doors, days, or line items, when a table's columns would be overkill. Reader: Tap a linked row to open its destination; unlinked rows are display-only. Under by-day, step between dated days with previous and next.
+- link-button [one prominent next destination]: Make the reader's main next destination prominent, whether it is an external service or another Strata page. Reader: Open an external link in another tab, or navigate to an accessible Strata page.
+- metric [one value]: Glance at one important labelled value, such as a quantity, amount, date, or short state. A value that is an offset-bearing ISO datetime renders relatively - a countdown, or "3 days ago" - while a date-only value stays a fixed day. Optional change is a delta with direction and polarity ("+12 vs yesterday") and trend a sparkline of recent values.
+- phases [named stages toward a date]: Follow named stretches of a plan toward a date, letting the reader see which stage is current without being told the week number.
+- progress [one value against a target]: Judge how far a measured value has advanced toward a real target and any source-backed deadline. When lower is better - a mile time, a backlog - set direction:"lower" with the start it is coming down from.
+- prose [a connected explanation]: Read a connected explanation when causal relationships, qualifications, or reasoning need to stay together in sentences.
+- quote [one attributed voice]: Read a short quotation in its own voice, with attribution when the source identifies its speaker.
+- reference-list [quiet external evidence]: Consult supporting evidence or further reading through quiet source links with enough context to identify each source. Reader: Open sources in another tab; expand clipped titles and notes locally.
+- section [mixed content in page order]: Group related content in page order, using headings for meaningful parts within the page and an untitled section at the root.
+- status-list [an open-work queue]: Review open work by its current state, ownership, and waiting time to understand what needs attention next.
+- streak-grid [daily activity by calendar position]: Inspect daily activity patterns through calendar position and relative intensity when cadence or consistency matters more than precise comparison. Optional days (7-371) draws a last-N-days window ending on the reader's today, or on end, from cells that name only active days. Reader: Scroll the calendar locally; cells are display-only and cannot record activity.
+- table [records on shared fields]: Compare aligned records or attributes on shared fields when exact lookup and side-by-side comparison matter to the reader. Reader: Scroll wide tables and copy marked columns; no sorting, filtering, or editing.
+- timeline [an ordered sequence]: Follow an ordered sequence of events or stages, preserving only the dates and times the source establishes. Reader: Tap a linked event to open its destination; the sequence itself cannot be rescheduled or completed from the page.
+
+ORDER
+The main answer first; supporting detail after. The summary is the delta the chrome shows — never repeat it in the body.
+
+LIMITS (a write over a cap is refused, never truncated)
+Visible text: living 1,500 chars, standing 3,000; one collection 600, and same-type sibling collections under one parent share that single 600 - splitting a list into siblings is refused, not a way around it. A plan or log over a cap becomes a parent page plus one page per week or day (sequence up + position), never a line per part.
+Counted: what the reader reads - titles, labels, values, notes, table cells, reference titles and sources. Free: ids, URLs, dates, answer.verdict, code-block code, approval context. Every field's own cap is in its description in GET /v1/manifest. POST /v1/pages/preflight checks the candidate spec and reports budgets without storing it; the final write also checks request metadata and current stored state.
+Only facts the source supports: no invented numbers, dates, series, headings, or stronger conclusions. No Markdown or HTML. No styles; URLs only where the schema takes them: link-button, reference-list, and link.
+
+BEFORE SENDING
+Every child id resolves once · every type and prop is in the manifest · every material fact lives in a component, not only in the verdict · every count is under its cap · on a phone, the state is clear in three seconds.
+
+More depth: GET /v1/guide?topic=representation (representation pass, worked example, display rules).

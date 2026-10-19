@@ -1,0 +1,820 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-system-sans);
+  --font-mono: var(--font-system-mono);
+  --font-heading: var(--font-sans);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-control-border: var(--control-border);
+  --color-control-border-invalid: var(--control-border-invalid);
+  --color-border: var(--border);
+  --color-hairline: var(--hairline);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-product-muted-foreground: var(--product-muted-foreground);
+  --color-product-divider: var(--product-divider);
+  --color-product-divider-strong: var(--product-divider-strong);
+  --color-product-active: var(--product-active);
+  --color-product-active-subtle: var(--product-active-subtle);
+  --color-status-attention: var(--status-attention);
+  --color-status-attention-foreground: var(--status-attention-foreground);
+  --color-status-info: var(--status-info);
+  --color-status-info-foreground: var(--status-info-foreground);
+  --color-status-danger: var(--status-danger);
+  --color-status-danger-foreground: var(--status-danger-foreground);
+  --color-status-success: var(--status-success);
+  --color-status-success-foreground: var(--status-success-foreground);
+  --color-status-success-border: var(--status-success-border);
+  --color-intensity-zero: var(--intensity-zero);
+  --color-intensity-low: var(--intensity-low);
+  --color-intensity-medium: var(--intensity-medium);
+  --color-intensity-high: var(--intensity-high);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  /* Letter-spacing scale: title for display headings, row for row headings, meta for tabular
+     timestamps. */
+  --tracking-title: -0.03em;
+  --tracking-row: -0.01em;
+  --tracking-meta: 0.01em;
+  /* Code line height; code-line min-height derives from the same value. */
+  --leading-code: 1.45;
+  /* Secondary surface mixed 5% toward the foreground; the shared hover fill. */
+  --color-secondary-hover: color-mix(in oklch, var(--secondary), var(--foreground) 5%);
+  --text-title: 28px;
+  --text-title--line-height: 1.12;
+  --text-heading: 20px;
+  --text-heading--line-height: 1.3;
+  --text-lead: 18px;
+  --text-lead--line-height: 1.55;
+  --text-body: 16px;
+  --text-body--line-height: 1.6;
+  --text-ui: 15px;
+  --text-ui--line-height: 1.35;
+  --text-supporting: 14px;
+  --text-supporting--line-height: 1.45;
+  --text-meta: 13px;
+  --text-meta--line-height: 1.4;
+  --text-micro: 12px;
+  --text-micro--line-height: 1.35;
+  --text-overline: 11px;
+  --text-overline--line-height: 1rem;
+  --text-calendar: 9px;
+  --text-calendar--line-height: 1rem;
+  --text-mark-xs: 9px;
+  --text-mark-xs--line-height: 1;
+  --text-mark-sm: 10px;
+  --text-mark-sm--line-height: 1;
+  --text-mark-md: 12px;
+  --text-mark-md--line-height: 1;
+  --text-row: 17px;
+  --text-row--line-height: 1.5rem;
+  --text-subheading: 19px;
+  --text-subheading--line-height: 1.5rem;
+  --text-section: 22px;
+  --text-section--line-height: 1.3;
+  --text-section-wide: 24px;
+  --text-section-wide--line-height: 1.3;
+  --text-title-wide: 32px;
+  --text-title-wide--line-height: 1.12;
+  --text-landing: 48px;
+  --text-landing--line-height: 0.94;
+  --text-landing-wide: 56px;
+  --text-landing-wide--line-height: 0.94;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  /* control: hit area of a menu row or tab. contained: box around content (table, code block,
+     alert). */
+  --radius-control: calc(var(--radius) * 1.25);
+  --radius-contained: calc(var(--radius) * 1.5);
+  --radius-panel: calc(var(--radius) * 2.75);
+  --radius-sheet: calc(var(--radius) * 3.75);
+  --radius-data-cell: 4px;
+  --radius-data-key: 3px;
+  --radius-chart-marker: 2px;
+  --spacing-control: 2.75rem;
+  --spacing-control-lg: 3rem;
+  --spacing-collection-row: 4.75rem;
+  --spacing-page-gutter: 1.25rem;
+  --spacing-page-gutter-wide: 1.5rem;
+  --container-strata: 42rem;
+}
+
+/* Collection layout tokens for the [data-collection] rules below. `static` because no
+   generated utility references them, so Tailwind would otherwise prune them. */
+@theme static {
+  --collection-metric-gap: 0.75rem;
+  --collection-metric-min: 9rem;
+  --collection-metric-max: 9.5rem;
+  --collection-metric-item-min-height: 9rem;
+  --collection-tile-gap: 0.75rem;
+  --collection-tile-solo-width: 28rem;
+  --collection-tile-aspect-wide: 4 / 3;
+  --collection-tile-aspect-sheet: 1 / 1;
+  --collection-choice-gap: 0.5rem;
+  --collection-cell-gap: 0.25rem;
+  --collection-cell-size: 1rem;
+  --collection-cell-rows: 7;
+}
+
+:root {
+  --font-system-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+  --font-system-mono: "SFMono-Regular", ui-monospace, "Cascadia Code", "Roboto Mono", monospace;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.209 0 0);
+  --card: var(--muted);
+  --card-foreground: oklch(0.209 0 0);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.2393 0 0);
+  --primary-foreground: var(--background);
+  --secondary: var(--muted);
+  --secondary-foreground: var(--primary);
+  --muted: oklch(0.9846 0.0017 247.84);
+  --muted-foreground: oklch(0.5399 0.0077 286.14);
+  --accent: var(--menu-focus);
+  --accent-foreground: var(--primary);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: var(--background);
+  /* One 1px line color for every rule, rail and divider; a lighter-looking line is a bug. */
+  --hairline: oklch(0.9197 0.004 286.32);
+  --border: var(--hairline);
+  /* Focused menu row fill. Separate from `--border` so high contrast can darken edges without
+     darkening focus. */
+  --menu-focus: oklch(0.9581 0 0);
+  /* 3.11:1 on white, meeting the WCAG 1.4.11 3:1 minimum for focus indicators. */
+  --ring: oklch(0.66 0 0);
+  /* Control edge (field, OTP, search). Separate from dividers because it is the control's only
+     affordance, so it needs 3:1 like the ring (3.11:1 on white). */
+  --control-border: oklch(0.66 0.0054 286.29);
+  /* Solid rather than a tint so it stays darker than the resting edge: 3.90:1 on white. */
+  --control-border-invalid: oklch(0.62 0.143 22.17);
+  --product-muted-foreground: oklch(0.4876 0.0095 286.04);
+  --product-divider: var(--hairline);
+  --product-divider-strong: var(--hairline);
+  --product-active: oklch(0.9349 0.004 286.32);
+  --product-active-subtle: oklch(0.9494 0.0013 286.37);
+  --status-attention: oklch(0.962 0.047 90.54);
+  --status-attention-foreground: oklch(0.386 0.093 47.28);
+  --status-info: oklch(0.951 0.026 236.82);
+  --status-info-foreground: oklch(0.391 0.09 240.88);
+  --status-danger: oklch(0.947 0.026 17.57);
+  --status-danger-foreground: oklch(0.405 0.143 22.17);
+  --status-success: oklch(0.95 0.038 157.14);
+  --status-success-foreground: oklch(0.369 0.083 157.21);
+  --status-success-border: oklch(0.801 0.108 156.95);
+  --intensity-zero: oklch(0.9 0.004 286.32);
+  --intensity-low: oklch(0.75 0.006 286.2);
+  --intensity-medium: oklch(0.53 0.008 286.05);
+  --intensity-high: var(--primary);
+  --chart-1: oklch(0.62 0 0);
+  --chart-2: oklch(0.52 0 0);
+  --chart-3: oklch(0.43 0 0);
+  --chart-4: oklch(0.34 0 0);
+  --chart-5: oklch(0.25 0 0);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    position: relative;
+    min-width: 320px;
+    max-width: 100%;
+    overflow-x: clip;
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  a[href] {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  html {
+    @apply font-sans;
+    background: var(--background);
+    max-width: 100%;
+    overflow-x: clip;
+    scroll-behavior: smooth;
+  }
+  h1,
+  h2,
+  h3,
+  p,
+  dt,
+  dd,
+  td,
+  th {
+    overflow-wrap: anywhere;
+  }
+  :focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--foreground) 70%, transparent);
+    outline-offset: 3px;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--foreground) 14%, transparent);
+  }
+}
+
+/* Collection layout. Attributes are written by `src/page-content/collection.tsx`. Unlayered so
+   it overrides the container's layered `flex gap-4` utilities. */
+[data-collection] {
+  display: grid;
+  min-width: 0;
+  gap: var(--collection-gap);
+}
+
+[data-collection] > * {
+  min-width: 0;
+}
+
+/* Two columns on a phone, then fixed-width columns capped at `max` so cards keep their size. */
+[data-collection="metric"] {
+  --collection-gap: var(--collection-metric-gap);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+[data-collection="metric"] > * {
+  min-height: var(--collection-metric-item-min-height);
+}
+
+/* Rows take their tallest card instead of clipping into a fixed square. */
+[data-collection="metric"] article {
+  height: 100%;
+}
+
+@media (width >= 40rem) {
+  [data-collection="metric"] {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(var(--collection-metric-min), var(--collection-metric-max))
+    );
+  }
+}
+
+/* By count: one 4:3 frame at reading width, two side by side, three or more as a square grid
+   (2 columns, 3 from 40rem). Explicit columns, since auto-fit would fit four in 42rem. */
+[data-collection="tile"] {
+  --collection-gap: var(--collection-tile-gap);
+  --collection-aspect: var(--collection-tile-aspect-sheet);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+[data-collection="tile"][data-count="1"] {
+  --collection-aspect: var(--collection-tile-aspect-wide);
+  max-width: var(--collection-tile-solo-width);
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+[data-collection="tile"][data-count="2"] {
+  --collection-aspect: var(--collection-tile-aspect-wide);
+}
+
+@media (width >= 40rem) {
+  [data-collection="tile"][data-count="many"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.strata-collection-frame {
+  aspect-ratio: var(--collection-aspect);
+}
+
+/* Always two columns; a third would shrink short option labels below reading size. */
+[data-collection="choice"] {
+  --collection-gap: var(--collection-choice-gap);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Fixed-size day cells in week columns; the calendar scrolls rather than compresses. */
+[data-collection="cell"] {
+  --collection-gap: var(--collection-cell-gap);
+  grid-auto-flow: column;
+  grid-template-rows: repeat(var(--collection-cell-rows), minmax(0, 1fr));
+  width: max-content;
+}
+
+[data-collection="cell"] > * {
+  width: var(--collection-cell-size);
+  height: var(--collection-cell-size);
+}
+
+/* Fixed-height rows can skip off-screen layout and paint. Collection rows may wrap, so they
+   don't use this. */
+.strata-product-inventory-row {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 4.75rem;
+}
+
+.strata-skip-link {
+  position: fixed;
+  top: max(0.5rem, env(safe-area-inset-top, 0px));
+  left: 0.75rem;
+  z-index: 100;
+  max-width: calc(100% - 1.5rem);
+  transform: translateY(-150%);
+  border-radius: 999px;
+  background: var(--foreground);
+  color: var(--background);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: transform 150ms ease;
+}
+
+.strata-skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* The app's WebView grants :focus-visible to the first focusable element on load. The native
+   shell sets data-strata-shell="native" until the first interaction; browsers never set it. */
+:root[data-strata-shell="native"] .strata-skip-link:focus-visible {
+  transform: translateY(-150%);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  button:not(:disabled):active,
+  [role="button"]:not(:disabled):active,
+  a[href]:active {
+    opacity: 0.68;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --hairline: oklch(0.42 0 0);
+    --border: var(--hairline);
+    --muted-foreground: oklch(0.28 0 0);
+    --ring: oklch(0.16 0 0);
+    --product-muted-foreground: oklch(0.24 0 0);
+    --product-divider: var(--hairline);
+    --product-divider-strong: var(--hairline);
+    --control-border: oklch(0.32 0.0054 286.29);
+    /* Keep the invalid edge darker than the resting one (13.7:1 vs 12.6:1). */
+    --control-border-invalid: oklch(0.3 0.143 22.17);
+  }
+
+  [data-slot="badge"],
+  [data-status],
+  [data-slot="drawer-content"],
+  [data-slot="chart"] {
+    border-color: currentColor !important;
+  }
+
+  [data-strata-streak-cell] {
+    border-color: rgb(25 25 27 / 0.7) !important;
+  }
+
+  [data-strata-streak-cell][data-today="true"] {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+/* Forced colors strips the intensity fills, so the streak grid shows numbers instead: today's
+   value on the today cell and a sum under each week. */
+.strata-streak-cell-today-value,
+.strata-streak-week-sums {
+  display: none;
+}
+
+@media (forced-colors: active) {
+  .strata-streak-cell-today-value {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1;
+    /* The cell behind can be any system color; force a Canvas/CanvasText pair. */
+    forced-color-adjust: none;
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .strata-streak-week-sums {
+    display: grid;
+  }
+
+  :focus-visible {
+    outline: 3px solid Highlight !important;
+    outline-offset: 3px;
+  }
+
+  [data-strata-translucent],
+  [data-slot="drawer-content"] {
+    border-color: CanvasText !important;
+    background: Canvas !important;
+    color: CanvasText !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  [data-slot="drawer-overlay"] {
+    background: CanvasText !important;
+    opacity: 0.35;
+  }
+
+  [data-slot="badge"],
+  [data-status] {
+    border: 1px solid CanvasText !important;
+    background: Canvas !important;
+    color: CanvasText !important;
+  }
+
+  [data-slot="chart"] .recharts-line-curve,
+  [data-slot="chart"] .recharts-area-curve {
+    stroke: Highlight !important;
+  }
+
+  [data-slot="chart"] .recharts-bar-rectangle path {
+    fill: Highlight !important;
+  }
+
+  [data-slot="chart"] .recharts-cartesian-grid line,
+  [data-slot="chart"] .recharts-cartesian-axis line {
+    stroke: CanvasText !important;
+  }
+
+  [data-strata-streak-cell] {
+    forced-color-adjust: none;
+    border-color: CanvasText !important;
+  }
+
+  [data-strata-streak-cell][data-level="missing"] {
+    background: Canvas !important;
+    /* ButtonFace and Canvas are the same color in the default Windows high-contrast themes, so
+       zero vs missing is carried by border style. */
+    border-style: dashed !important;
+  }
+
+  /* Zero (in range, nothing done) must not read as missing (outside the range). */
+  [data-strata-streak-cell][data-level="zero"] {
+    background: ButtonFace !important;
+  }
+
+  [data-strata-streak-cell][data-level="low"] {
+    background: GrayText !important;
+  }
+
+  [data-strata-streak-cell][data-level="medium"] {
+    background: LinkText !important;
+  }
+
+  [data-strata-streak-cell][data-level="high"] {
+    background: Highlight !important;
+  }
+
+  [data-strata-streak-cell][data-today="true"] {
+    outline: 2px solid CanvasText !important;
+    outline-offset: 2px;
+  }
+
+  .strata-skip-link {
+    border: 2px solid CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  /* Forced colors drops box-shadows and recolors borders, so focus and invalid need other cues.
+     The OTP's real input is visually hidden, so the group draws focus; invalid uses dashed. */
+  [data-slot="input"]:focus-visible,
+  [data-slot="input-otp-group"][data-focused="true"] {
+    outline: 3px solid Highlight !important;
+    outline-offset: 2px;
+  }
+
+  [data-slot="input"][aria-invalid="true"],
+  .cn-input-otp:has([aria-invalid="true"]) > [data-slot="input-otp-group"] {
+    border-style: dashed !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  [data-strata-translucent] {
+    background: rgb(255 255 255 / 0.98) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* Motion */
+
+/* Press feedback. The shorthand replaces any `transition-*` utility on the element, so it lists
+   every animated property (never `all`). */
+.strata-press {
+  transition:
+    transform 120ms var(--ease-out),
+    opacity 120ms var(--ease-out),
+    background-color 120ms var(--ease-out),
+    border-color 120ms var(--ease-out),
+    color 120ms var(--ease-out);
+}
+
+.strata-press:active {
+  transform: scale(0.97);
+}
+
+/* Hover scale needs a fine pointer (phones fire hover on tap) and skips Buttons, which can be
+   full width and would reflow their text at subpixel positions. */
+@media (hover: hover) and (pointer: fine) {
+  .strata-press:not([data-slot="button"]):not([data-strata-no-hover-motion]):hover {
+    transform: scale(0.99);
+  }
+}
+
+/* Touch press: instant on press, eased on release. In `base` so a component's own
+   `transition-*` utility wins; unlayered, it would replace every color transition on touch. */
+@layer base {
+  @media (hover: none) and (pointer: coarse) {
+    button:not(:disabled),
+    [role="button"]:not(:disabled),
+    a[href] {
+      transition: opacity 140ms var(--ease-out);
+    }
+  }
+}
+
+/* `!important` to beat the reduced-motion `.strata-press` rule, which is also important;
+   otherwise reduced motion would make the press slower. */
+@media (hover: none) and (pointer: coarse) {
+  button:not(:disabled):active,
+  [role="button"]:not(:disabled):active,
+  a[href]:active,
+  .strata-press:active {
+    transition-duration: 0ms !important;
+  }
+}
+
+/* Landing entrance: fade and rise 8px, staggered by `--strata-enter-delay`. Transform and
+   opacity only, so nothing lays out twice. */
+@keyframes strata-enter-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.strata-enter {
+  animation: strata-enter-in 300ms var(--ease-out) var(--strata-enter-delay, 0ms)
+    both;
+}
+
+/* Space disclosure. Height has no transform equivalent here, so it is animated and clipped.
+   Keyframes, not a transition, because Radix waits for the animation before unmounting. */
+@keyframes strata-unfold {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+    opacity: 1;
+  }
+}
+@keyframes strata-fold {
+  from {
+    height: var(--radix-collapsible-content-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+.strata-unfold[data-state="open"] {
+  overflow: hidden;
+  animation: strata-unfold 160ms var(--ease-out) both;
+}
+.strata-unfold[data-state="closed"] {
+  overflow: hidden;
+  animation: strata-fold 120ms var(--ease-out) both;
+}
+
+/* First-run Home: pieces enter in turn, 40ms apart, status line last. */
+[data-strata-first-run] [data-slot="empty-icon"] {
+  animation: strata-enter-in 300ms var(--ease-out) 0ms both;
+}
+[data-strata-first-run] [data-slot="empty-title"] {
+  animation: strata-enter-in 300ms var(--ease-out) 40ms both;
+}
+[data-strata-first-run] [data-slot="empty-description"] {
+  animation: strata-enter-in 300ms var(--ease-out) 80ms both;
+}
+[data-strata-first-run] [data-strata-first-run-status]:not(.strata-strip-in) {
+  animation: strata-enter-in 300ms var(--ease-out) 120ms both;
+}
+
+/* Change strip shown after a poll. */
+@keyframes strata-strip-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.strata-strip-in {
+  animation: strata-strip-in 200ms var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Reduced motion keeps fades and color, drops movement and scale. The blanket reset above is
+     !important, so these must be too. */
+  .strata-press {
+    transition:
+      opacity 120ms var(--ease-out),
+      background-color 120ms var(--ease-out),
+      border-color 120ms var(--ease-out),
+      color 120ms var(--ease-out) !important;
+  }
+
+  .strata-press:active {
+    transform: none;
+    opacity: 0.7;
+  }
+
+  /* Must match the full-motion selector exactly, or its specificity keeps the scale. */
+  @media (hover: hover) and (pointer: fine) {
+    .strata-press:not([data-slot="button"]):not([data-strata-no-hover-motion]):hover {
+      transform: none;
+    }
+  }
+
+  .strata-strip-in {
+    animation: strata-strip-in 200ms var(--ease-out) both !important;
+  }
+
+  @keyframes strata-strip-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .strata-enter {
+    animation: strata-enter-in 300ms var(--ease-out) var(--strata-enter-delay, 0ms)
+      both !important;
+  }
+
+  @keyframes strata-enter-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Fade only; `strata-enter-in` resolves to the fade-only keyframes above. */
+  [data-strata-first-run] [data-slot="empty-icon"] {
+    animation: strata-enter-in 300ms var(--ease-out) 0ms both !important;
+  }
+  [data-strata-first-run] [data-slot="empty-title"] {
+    animation: strata-enter-in 300ms var(--ease-out) 40ms both !important;
+  }
+  [data-strata-first-run] [data-slot="empty-description"] {
+    animation: strata-enter-in 300ms var(--ease-out) 80ms both !important;
+  }
+  [data-strata-first-run] [data-strata-first-run-status]:not(.strata-strip-in) {
+    animation: strata-enter-in 300ms var(--ease-out) 120ms both !important;
+  }
+
+  /* A Space still opens; it fades in place instead of unrolling. */
+  .strata-unfold[data-state="open"] {
+    animation: strata-strip-in 160ms var(--ease-out) both !important;
+  }
+  .strata-unfold[data-state="closed"] {
+    animation: none !important;
+  }
+}
+
+/* Agent attribution. One hue per agent (`--agent-hue`) at fixed low chroma and lightness.
+   Unlayered so it beats the primitive's `bg-muted` utility without !important. */
+[data-strata-agent-tint] {
+  background: oklch(0.94 0.04 var(--agent-hue));
+  color: oklch(0.45 0.09 var(--agent-hue));
+}
+
+/* The app is light-only, so the dark tint applies only to subtrees opted in with
+   data-theme="dark", never via the OS preference. */
+[data-theme="dark"] [data-strata-agent-tint] {
+  background: oklch(0.3 0.05 var(--agent-hue));
+  color: oklch(0.85 0.07 var(--agent-hue));
+}
+
+/* Tooltip motion, keyed on the primitive since the reduced-motion reset flattens tw-animate.
+   Keyframes because Radix mounts content with its state set; only the scale gets the easing. */
+@keyframes strata-writer-tip-scale {
+  from {
+    transform: scale(0.97);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes strata-writer-tip-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes strata-writer-tip-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+[data-slot="tooltip-content"] {
+  transform-origin: var(--radix-tooltip-content-transform-origin);
+  animation:
+    strata-writer-tip-scale 125ms cubic-bezier(0.23, 1, 0.32, 1),
+    strata-writer-tip-fade 125ms;
+}
+
+/* A distinct closed-state animation-name lets Radix Presence wait before unmounting. Fade only,
+   faster than the entrance (100ms vs 125ms), holding at zero until removal. */
+[data-slot="tooltip-content"][data-state="closed"] {
+  animation: strata-writer-tip-fade-out 100ms cubic-bezier(0.23, 1, 0.32, 1)
+    forwards;
+}
+
+/* Reduced motion: drop the scale, keep the fade. `!important` to beat the blanket reset. */
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="tooltip-content"] {
+    animation: strata-writer-tip-fade 125ms !important;
+  }
+
+  [data-slot="tooltip-content"][data-state="closed"] {
+    animation: strata-writer-tip-fade-out 100ms cubic-bezier(0.23, 1, 0.32, 1)
+      forwards !important;
+  }
+}
+
+/* No hover, no tooltip: on a phone the header names the agent and a tap belongs to the row. */
+@media (hover: none), (pointer: coarse) {
+  [data-slot="tooltip-content"][data-strata-writer-tooltip] {
+    display: none;
+  }
+}

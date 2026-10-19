@@ -1,0 +1,12 @@
+{
+  "note": "Every universal-link path the app claims, listed once. `#` is a one-character wildcard: apps/web renders it as `?` for the Apple AASA file and apps/mobile as `.` for Android App Link path patterns, so both platforms always claim the same paths.",
+  "wildcard": "#",
+  "paths": [
+    "/home",
+    "/home/sign-in",
+    "/pages/########-####-####-####-############",
+    "/spaces/########-####-####-####-############",
+    "/share/###_###########################################",
+    "/share/spk_###########################################/pages/########-####-####-####-############"
+  ]
+}

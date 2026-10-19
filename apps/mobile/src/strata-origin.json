@@ -1,0 +1,5 @@
+{
+  "note": "The one site this app is a browser for, written once. app.config.ts reads it to build the associated domains and Android intent filters that go into the signed binary; src/config.ts reads it to decide which navigations stay inside the WebView. Those two must never disagree, so neither of them holds its own copy.",
+  "defaultOrigin": "https://strata.example",
+  "loopbackHosts": ["localhost", "127.0.0.1", "[::1]"]
+}

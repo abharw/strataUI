@@ -1,0 +1,16 @@
+packages:
+  - "apps/*"
+
+# Expo 54 and the Next app intentionally use different React type generations.
+# Keep the mobile copy isolated, while packages without an explicit type peer
+# resolve the web/root React 19.2 types instead of pnpm's private hoist.
+hoistPattern:
+  - "*"
+  - "!@types/react"
+publicHoistPattern:
+  - "@types/react"
+
+allowBuilds:
+  esbuild: false
+  sharp: false
+  unrs-resolver: false

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm exec drizzle-kit migrate --config drizzle.config.ts && pnpm build",
+  "crons": [
+    {
+      "path": "/api/cron/sweep",
+      "schedule": "0 4 * * *"
+    }
+  ]
+}
